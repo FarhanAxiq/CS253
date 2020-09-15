@@ -1,0 +1,32 @@
+ # Farhan Haziq
+ # Lab 02
+ # rn
+ #! /bin/bash
+
+    if [[ $# < 2 ]]
+    then
+        echo "Not enough argument" >&2
+        exit 1
+    elif [[ $# > 2 ]]
+    then
+        echo "Too much argument" >&2
+        exit 1
+    fi
+
+
+    old_suffix=$1
+    new_suffix=$2
+
+    for f in *.$old_suffix
+    do
+      if [[ ${f%.*}.$old_suffix ]]
+         then
+         mv $f ${f%.*}.$new_suffix
+         new_name=${f%.*}.$new_suffix
+         echo Rename $f to $new_name
+      else
+        echo "Extension not found" >&2
+      fi
+     done
+
+~               
