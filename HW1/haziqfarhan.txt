@@ -1,0 +1,150 @@
+Score: 2.00/4.00 points
+Graded by Miller Ridgeway <millerridgeway@CS.ColoState.Edu>
+
+Summary of all tests:
+  Value  Result  Test  Description
+   0.50  FAIL       1  unpack
+   0.50  FAIL       2  builds
+   1.00  pass       3  no warnings
+   0.10  FAIL       4  -Wall used
+   0.10  pass       5  no dynamic memory
+   0.10  pass       6  no ASCII constants
+   0.10  pass       7  no external programs
+   0.10  pass       8  no C I/O
+   0.25  FAIL       9  error message to standard error w/ offending token
+   0.25  pass      10  error message must include program name
+   0.15  FAIL      11  alpha tokenization
+   0.25  FAIL      12  operator tokenization
+   0.25  FAIL      13  number tokenization
+   0.10  pass      14  globals
+   2.00                Total
+Passed 7 tests, failed 7 tests.
+
+Details of individual tests:
+
+Executing: tar -xvvf submissions_hw1/haziqfarhan_175027_16407787_HW1.tar -C Build --strip-components 1
+Exit code: 0
+Standard output (8 lines):
+	drwxrwxrwx farhan/farhan     0 2020-09-09 12:47 HW1/.vscode/
+	-rwxrwxrwx farhan/farhan   608 2020-09-04 21:09 HW1/.vscode/c_cpp_properties.json
+	-rwxrwxrwx farhan/farhan   978 2020-09-09 12:47 HW1/.vscode/launch.json
+	-rwxrwxrwx farhan/farhan  1264 2020-09-12 00:34 HW1/.vscode/settings.json
+	-rwxrwxrwx farhan/farhan   461 2020-09-12 20:46 HW1/data
+	-rwxrwxrwx farhan/farhan  2925 2020-09-12 21:41 HW1/HW1.cc
+	-rwxrwxrwx farhan/farhan 47624 2020-09-12 21:41 HW1/HW1.o
+	-rwxrwxrwx farhan/farhan   308 2020-09-12 20:56 HW1/Makefile
+Standard error is empty
+
+Test 1: unpack
+Status: FAIL
+Condition: [[ -r Build/CMakeLists.txt ]]
+Value: 0.50
+
+Executing: cmake . && make
+Exit code: 1
+Standard output is empty
+Standard error (2 lines):
+	CMake Error: The source directory "/home/millerridgeway/Projects/253_Grading/Build" does not appear to contain CMakeLists.txt.
+	Specify --help for usage, or press the help button on the CMake GUI.
+
+Test 2: builds
+Status: FAIL
+Condition: [[ -r Build/hw1 ]]
+Value: 0.50
+
+Test 3: no warnings
+Status: pass
+Condition: ! grep -qi warning stdout stderr
+Value: 1.00
+
+Test 4: -Wall used
+Status: FAIL
+Condition: grep -q 'add_compile_options.*-Wall\b' Build/CMakeLists.txt
+Value: 0.10
+Contents of file Build/CMakeLists.txt is empty
+
+Test 5: no dynamic memory
+Status: pass
+Condition: ! grep -q '=\s*new\b' Build/main.cc
+Value: 0.10
+
+Test 6: no ASCII constants
+Status: pass
+Condition: ! grep -P '\b[4-9]\d\b' Build/HW1.cc
+Value: 0.10
+
+Test 7: no external programs
+Status: pass
+Condition: Don’t use: system fork popen 'exec.*'
+Value: 0.10
+
+Test 8: no C I/O
+Status: pass
+Condition: Don’t use: '[fs]?(print|scan)f' puts fopen stdin stdout
+Value: 0.10
+
+Executing: echo '^' | Build/hw1
+Couldn’t execute 'echo '\''^'\'' | Build/hw1'
+Standard output is empty
+Standard error (1 line):
+	(eval):1: no such file or directory: Build/hw1
+
+Test 9: error message to standard error w/ offending token
+Status: FAIL
+Condition: grep -qiF '^' stderr
+Value: 0.25
+
+Executing: cp Build/hw1 Build/zorkmid
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	cp: cannot stat 'Build/hw1': No such file or directory
+
+Executing: echo '$' | Build/zorkmid
+Couldn’t execute 'echo '\''$'\'' | Build/zorkmid'
+Standard output is empty
+Standard error (1 line):
+	(eval):1: no such file or directory: Build/zorkmid
+
+Test 10: error message must include program name
+Status: pass
+Condition: grep -qi zorkmid stderr
+Value: 0.25
+
+Executing: echo 'abciup' | Build/hw1
+Couldn’t execute 'echo '\''abciup'\'' | Build/hw1'
+Standard output is empty
+Standard error (1 line):
+	(eval):1: no such file or directory: Build/hw1
+
+Test 11: alpha tokenization
+Status: FAIL
+Condition: exact 'a\nb\nc\ni\nu\np\n' stdout
+Value: 0.15
+
+Executing: echo '!=*=/=printiffi' | Build/hw1
+Couldn’t execute 'echo '\''!=*=/=printiffi'\'' | Build/hw1'
+Standard output is empty
+Standard error (1 line):
+	(eval):1: no such file or directory: Build/hw1
+
+Test 12: operator tokenization
+Status: FAIL
+Condition: exact '!=\n*=\n/=\nprint\nif\nfi\n' stdout
+Value: 0.25
+
+Executing: echo '123456123456123456123456123456123456' | Build/hw1
+Couldn’t execute 'echo '\''123456123456123456123456123456123456'\'' | Build/hw1'
+Standard output is empty
+Standard error (1 line):
+	(eval):1: no such file or directory: Build/hw1
+
+Test 13: number tokenization
+Status: FAIL
+Condition: exact '123456123456123456123456123456123456\n' stdout
+Value: 0.25
+
+Test 14: globals
+Status: pass
+Condition: No globals other than program_name|progname|program
+Value: 0.10
