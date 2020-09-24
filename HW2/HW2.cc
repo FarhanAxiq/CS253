@@ -5,6 +5,11 @@
 //  TBD
 //
 
+
+
+// TODO: fix game logic
+// TODO: comply with the input/output requirement
+
 // A tribute to Mr John Conway 1937-2020 - Victim of COVID-19
 // and the inventor of the game
 

@@ -19,7 +19,7 @@ bool LinkedList::remove(unsigned &pData) {
 
     Link *temp = this->m_pHead;			    // Point to the first node.
     this->m_pHead = this->m_pHead->m_pNext;	// Remove the first node.
-    pData = temp->m_uiData;			    // Obtain first node’s data.
+    pData = temp->m_uiData;			        // Obtain first node’s data.
     delete temp;
     return true;				            //Indicate success.
 }
