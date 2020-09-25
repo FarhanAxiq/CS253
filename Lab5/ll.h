@@ -1,3 +1,11 @@
+//
+//  Lab 05
+//  ll.h
+//  Farhan Haziq
+//  fargah1@cs.colostate.edu
+//  TBD
+//
+
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 #include <iostream>

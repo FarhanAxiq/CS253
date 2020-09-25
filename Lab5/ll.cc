@@ -1,3 +1,12 @@
+//
+//  Lab 05
+//  ll.cc
+//  Farhan Haziq
+//  fargah1@cs.colostate.edu
+//  TBD
+//
+
+
 #include "ll.h" 
 #include <cstdlib>
 
@@ -8,35 +17,33 @@ LinkedList::LinkedList()
     : m_pHead(nullptr){}
 
 bool LinkedList::insert(unsigned uiData) {
-    Link* new_link = new Link(uiData, this->m_pHead);			// Get a new node.
-    this->m_pHead = new_link;			                        // Put it at the head.
-    return true;				                                // Indicate success.
+    Link* new_link = new Link(uiData, m_pHead);	// Get a new node.
+    m_pHead = new_link;			                // Put it at the head.
+    return true;				                // Indicate success.
 }
 
 bool LinkedList::remove(unsigned &pData) {
-    if (!this->m_pHead)				// Empty list?
+    if (!m_pHead)				    // Empty list?
 	    return false;				// Indicate failure.
 
-    Link *temp = this->m_pHead;			    // Point to the first node.
-    this->m_pHead = this->m_pHead->m_pNext;	// Remove the first node.
-    pData = temp->m_uiData;			        // Obtain first node’s data.
-    delete temp;
-    return true;				            //Indicate success.
+    Link *temp = m_pHead;			// Point to the first node.
+    m_pHead = m_pHead->m_pNext;	    // Remove the first node.
+    pData = temp->m_uiData;         // Obtain first node’s data.
+    delete temp;                    // delete heap object
+    return true;                    // Indicate success.
 }
 
 void LinkedList::print()
 {
-    Link *p;
-	for (p = this->m_pHead; p != nullptr; p = p->m_pNext){
-		std::cout << p->m_uiData << "\n";
-	} 
-
+    Link *temp;
+	for (temp = m_pHead; temp != nullptr; temp = temp->m_pNext){ std::cout << temp->m_uiData << " "; } 
+    std::cout << "\n";
 }
 
 LinkedList::~LinkedList()
 {  
-    Link *p;
-    for (p = this->m_pHead; p != nullptr; p = p->m_pNext){
-		remove(p->m_uiData);
-	} 
+    Link *temp;
+    for (temp = m_pHead; temp != nullptr; temp = temp->m_pNext){ 
+        remove(temp->m_uiData); 
+    } 
 }
