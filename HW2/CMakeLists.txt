@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(hw0)
+project(HW2)
 
 # Are we in the wrong directory?
 if(CMAKE_SOURCE_DIR MATCHES "[Hh][Ww]([0-9])$")
@@ -25,8 +25,8 @@ add_compile_options(-fmessage-length=80 -fno-diagnostics-show-option
 # add_compile_options must be BEFORE add_executable.
 
 # Create the executable from the source file main.cc:
-add_executable(${PROJECT_NAME} main.cc)
+add_executable(${PROJECT_NAME} HW2.cc)
 
 # Create a tar file every time:
 add_custom_target(${PROJECT_NAME}.tar ALL COMMAND
-    tar -cf ${PROJECT_NAME}.tar main.cc CMakeLists.txt)
+    tar -cf ${PROJECT_NAME}.tar HW2.cc CMakeLists.txt)

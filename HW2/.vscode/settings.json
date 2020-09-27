@@ -45,6 +45,8 @@
         "list": "cpp",
         "map": "cpp",
         "set": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "atomic": "cpp",
+        "compare": "cpp"
     }
 }
