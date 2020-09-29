@@ -11,13 +11,6 @@
 
 using namespace std;
 
-inline ostream &operator<<(ostream& out, const LinkedList &val)
-{
-	LinkedList::Link *temp = val.m_pHead;
-	if 	(temp == nullptr) { out << "Empty\n"; }
-	for (temp = val.m_pHead; temp != nullptr; temp = temp->m_pNext) { out << temp->m_uiData << " "; }
-	return out;
-}
 
 int main() {
 
