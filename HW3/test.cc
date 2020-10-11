@@ -13,7 +13,7 @@
 
 int main(int argc, char *argv[])
 {
-	 const auto prog = R"(
+     const auto prog = R"(
         n  = a n += b C/=123 # z=zz
  
         ifn≤3returN1FI)";
