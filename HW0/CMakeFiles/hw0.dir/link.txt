@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/hw0.dir/main.cc.o  -o hw0 

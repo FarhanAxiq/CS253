@@ -1,0 +1,61 @@
+austin:~/cs253/CS253/HW2$ cmake . && make
+-- The C compiler identification is GNU 10.2.1
+-- The CXX compiler identification is GNU 10.2.1
+-- Check for working C compiler: /bin/cc
+-- Check for working C compiler: /bin/cc - works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: /bin/c++
+-- Check for working CXX compiler: /bin/c++ - works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /s/chopin/n/under/fargah1/cs253/CS253/HW2
+Scanning dependencies of target hw2.tar
+[  0%] Built target HW2.tar
+Scanning dependencies of target HW2
+[ 50%] Building CXX object CMakeFiles/hw2.dir/HW2.cc.o
+[100%] Linking CXX executable HW2
+[100%] Built target HW2
+austin:~/cs253/CS253/HW2$ cat test
+...O..............O..
+...O...OO.O...OO..O.O
+...O..O..O...O....OO.
+O..O..O..O...O....OO.
+.OO....OO.O...OO..O.O
+austin:~/cs253/CS253/HW2$ ./HW2 test
+O..O.............OO..
+..OOO..OOO....O..OO..
+..OOO.O..OO..O...O...
+OO.O..O..OO..O...O...
+OOOO...OOO....O..OO.O
+austin:~/cs253/CS253/HW2$ ./HW2<test
+O..O.............OO..
+..OOO..OOO....O..OO..
+..OOO.O..OO..O...O...
+OO.O..O..OO..O...O...
+OOOO...OOO....O..OO.O
+austin:~/cs253/CS253/HW2$ ./HW2 test | ./hw2
+O...............O...O
+.O...O.OOOO.....O....
+......O......OO.OO...
+.....OO......OO.OO..O
+...OO..OOOO.....O..OO
+austin:~/cs253/CS253/HW2$ ./HW2 test | ./HW2 | ./HW2 | 
+O...O.O........OOO.OO
+O.....OOOO......O....
+........OO...OO......
+....OOO.OO...OO...OOO
+....OOOOOO......O..O.
+austin:~/cs253/CS253/HW2$ ./HW2 test | ./HW2 | ./HW2 | ./HW2
+O...O..........O.OOO.
+O....OO..O....O.OO...
+..........O..OOO...OO
+....O.....O..OOO..OOO
+O..O.....O....O.O....
+austin:~/cs253/CS253/HW2$

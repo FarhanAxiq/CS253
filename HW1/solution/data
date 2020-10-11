@@ -1,0 +1,18 @@
+# Celsius to Fahrenheit converter
+# °F = °C × 9/5 + 32
+# 212°F = 100°C
+#  32°F =   0°C
+ 
+    # Input: A contains Celsius temperature
+ 
+A *= 9      # °C × 9
+A /= 5      # °C × 9/5
+A += 32     # °C × 9/5 + 32
+f = a       # Put it in F for Fahrenheit
+ 
+Z = 0       # Constants have no sign, so compute a negative number.
+Z-=459   # absolute zero (should really be −459.67°F)
+ 
+iFF<=ZF=ZfI#If temperature is too low, make it absolute zero.
+ 
+print F

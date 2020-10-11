@@ -1,0 +1,44 @@
+Score: 0.00/4.00 points
+Graded by Miller Ridgeway <millerridgeway@CS.ColoState.Edu>
+
+Summary of all tests:
+  Value  Result  Test  Description
+   0.50  pass       1  unpack
+   0.50  FAIL       2  builds
+   0.00                Total
+Passed 1 test, failed 1 test.
+
+Details of individual tests:
+
+Executing: tar -xvvf submissions_hw2/haziqfarhan_LATE_175027_16660196_hw2-1.tar -C Build
+Exit code: 0
+Standard output (2 lines):
+	-rwxrwxrwx farhan/farhan  3502 2020-09-27 00:10 HW2.cc
+	-rwxrwxrwx farhan/farhan  1112 2020-09-26 12:36 CMakeLists.txt
+Standard error is empty
+
+Test 1: unpack
+Status: pass
+Condition: [[ -r Build/CMakeLists.txt ]]
+Value: 0.50
+
+Executing: cmake . && make
+Exit code: 0
+Standard output (10/23 lines):
+	-- The C compiler identification is GNU 9.3.1
+	-- The CXX compiler identification is GNU 9.3.1
+	-- Check for working C compiler: /usr/bin/cc
+	-- Check for working C compiler: /usr/bin/cc - works
+	-- Detecting C compiler ABI info
+	-- Detecting C compiler ABI info - done
+	-- Detecting C compile features
+	-- Detecting C compile features - done
+	-- Check for working CXX compiler: /usr/bin/c++
+	-- Check for working CXX compiler: /usr/bin/c++ - works
+	… and 13 more lines …
+Standard error is empty
+
+Test 2: builds
+Status: FAIL
+Condition: [[ -r Build/hw2 ]]
+Value: 0.50

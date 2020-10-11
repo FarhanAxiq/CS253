@@ -45,6 +45,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/HW2.tar.dir/DependInfo.cmake"
-  "CMakeFiles/HW2.dir/DependInfo.cmake"
+  "CMakeFiles/hw2.tar.dir/DependInfo.cmake"
+  "CMakeFiles/hw2.dir/DependInfo.cmake"
   )

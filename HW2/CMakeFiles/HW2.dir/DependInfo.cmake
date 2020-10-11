@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW2/HW2.cc" "/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW2/CMakeFiles/HW2.dir/HW2.cc.o"
+  "/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW2/HW2.cc" "/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW2/CMakeFiles/hw2.dir/HW2.cc.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

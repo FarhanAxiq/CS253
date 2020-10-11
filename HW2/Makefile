@@ -111,30 +111,30 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named HW2.tar
+# Target rules for targets named hw2.tar
 
 # Build rule for target.
-HW2.tar: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 HW2.tar
-.PHONY : HW2.tar
+hw2.tar: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hw2.tar
+.PHONY : hw2.tar
 
 # fast build rule for target.
-HW2.tar/fast:
-	$(MAKE) -f CMakeFiles/HW2.tar.dir/build.make CMakeFiles/HW2.tar.dir/build
-.PHONY : HW2.tar/fast
+hw2.tar/fast:
+	$(MAKE) -f CMakeFiles/hw2.tar.dir/build.make CMakeFiles/hw2.tar.dir/build
+.PHONY : hw2.tar/fast
 
 #=============================================================================
-# Target rules for targets named HW2
+# Target rules for targets named hw2
 
 # Build rule for target.
-HW2: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 HW2
-.PHONY : HW2
+hw2: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hw2
+.PHONY : hw2
 
 # fast build rule for target.
-HW2/fast:
-	$(MAKE) -f CMakeFiles/HW2.dir/build.make CMakeFiles/HW2.dir/build
-.PHONY : HW2/fast
+hw2/fast:
+	$(MAKE) -f CMakeFiles/hw2.dir/build.make CMakeFiles/hw2.dir/build
+.PHONY : hw2/fast
 
 HW2.o: HW2.cc.o
 
@@ -142,7 +142,7 @@ HW2.o: HW2.cc.o
 
 # target to build an object file
 HW2.cc.o:
-	$(MAKE) -f CMakeFiles/HW2.dir/build.make CMakeFiles/HW2.dir/HW2.cc.o
+	$(MAKE) -f CMakeFiles/hw2.dir/build.make CMakeFiles/hw2.dir/HW2.cc.o
 .PHONY : HW2.cc.o
 
 HW2.i: HW2.cc.i
@@ -151,7 +151,7 @@ HW2.i: HW2.cc.i
 
 # target to preprocess a source file
 HW2.cc.i:
-	$(MAKE) -f CMakeFiles/HW2.dir/build.make CMakeFiles/HW2.dir/HW2.cc.i
+	$(MAKE) -f CMakeFiles/hw2.dir/build.make CMakeFiles/hw2.dir/HW2.cc.i
 .PHONY : HW2.cc.i
 
 HW2.s: HW2.cc.s
@@ -160,7 +160,7 @@ HW2.s: HW2.cc.s
 
 # target to generate assembly for a file
 HW2.cc.s:
-	$(MAKE) -f CMakeFiles/HW2.dir/build.make CMakeFiles/HW2.dir/HW2.cc.s
+	$(MAKE) -f CMakeFiles/hw2.dir/build.make CMakeFiles/hw2.dir/HW2.cc.s
 .PHONY : HW2.cc.s
 
 # Help Target
@@ -170,9 +170,9 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... hw2.tar"
 	@echo "... edit_cache"
-	@echo "... HW2.tar"
-	@echo "... HW2"
+	@echo "... hw2"
 	@echo "... HW2.o"
 	@echo "... HW2.i"
 	@echo "... HW2.s"

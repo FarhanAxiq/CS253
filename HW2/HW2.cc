@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
         std::cerr << argv[1] << " cannot be open\n"; 
         exit(1);
     }
-    std::istream &in = (argv[1] == nullptr || argc < 2) ? std::cin : file;
+    std::istream &in = (argc < 2) ? std::cin : file;
 
     // make a 2D vector, see using for full type definition
     _2D_Vect board = create_board(in);

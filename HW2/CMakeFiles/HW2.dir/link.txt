@@ -1,1 +1,1 @@
-/usr/bin/c++     CMakeFiles/HW2.dir/HW2.cc.o  -o HW2 
+/usr/bin/c++     CMakeFiles/hw2.dir/HW2.cc.o  -o hw2 

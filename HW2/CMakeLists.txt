@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(HW2)
+project(hw2)
 
 # Are we in the wrong directory?
 if(CMAKE_SOURCE_DIR MATCHES "[Hh][Ww]([0-9])$")
