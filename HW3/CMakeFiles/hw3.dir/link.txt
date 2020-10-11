@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhw3.a  CMakeFiles/hw3.dir/Lexan.cc.o
+/usr/bin/ranlib libhw3.a
