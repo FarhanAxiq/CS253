@@ -3,7 +3,10 @@
 //  Farhan Haziq
 //  fargah1@cs.colostate.edu
 //  October 24th, 2020
+//
 //	"Why on earth using the getopt is sooooooo hard????
+//	too tired to actually debug
+//	some stuff is maaaybe broken, but so is my life.	
 //
 #include "GameOfLife.h"
 
@@ -63,6 +66,11 @@ void GameOfLife::set_gol()
 	if (pos != std::string::npos){
 		b = m_golly.substr(1, pos - 1);
 		s = m_golly.substr(pos + 2, m_golly.length());
+	}
+
+	if (b.empty() || s.empty() || m_golly[0] != 'B' || m_golly[pos + 1] != 'S'){
+		std::cerr << "Invalid born or survive value\n";
+		exit(1);
 	}
 
 	for (auto &c : b){
@@ -176,7 +184,10 @@ int main(int argc, char *argv[])
 	while ((opt = getopt(argc, argv, "g:d:l:i")) != -1){
 		switch (opt){
 			case 'g':
-				if (optarg[0] != 'B'){ break; }
+				if (optarg[0] != 'B'){ 
+					std::cerr << argv[0] << " : invalid character has been found\n";
+					exit(1);
+				}
 				golly = optarg;
 				break;
 		
@@ -228,7 +239,7 @@ int main(int argc, char *argv[])
 			
 			default:
 				std::cerr << "Usage: " << argv[0] << " [-g golly] [-d] dead [-l] alive [-i] loop [-file]\n";
-				break;
+				exit(1);
 		}
 	}
 	// as getopt permutate non-option at the end

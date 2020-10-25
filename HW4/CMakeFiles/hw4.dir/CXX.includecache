@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW4/GameOfLife.cc
+GameOfLife.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW4/GameOfLife.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW4/GameOfLife.h
+iostream
+-
+fstream
+-
+string
+-
+vector
+-
+algorithm
+-
+cstring
+-
+unistd.h
+-
+
