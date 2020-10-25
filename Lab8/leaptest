@@ -1,0 +1,28 @@
+# old leap
+ 328410:   64:    if (year % 400 == 0)			// Divisible by 400?
+      805:   65:	    return true;				// It’s a leap year.
+   327605:   66:    if (year % 100 == 0)			// Divisible by 100?
+     2415:   67:	    return false;				// Not a leap year.
+   325190:   68:    if (year % 4 == 0)				// Divisible by 4?
+    77608:   69:    	return true;				// It’s a leap year.
+   247582:   70:    return false;				// Boring old ordinary year.
+
+   #new leap
+   328410:   62:static bool leap(int year) {
+  328410*:   63:    assert(1 <= year && year <= 9999);
+        -:   64:    // if (year % 400 == 0)			// Divisible by 400?
+        -:   65:	//     return true;				// It’s a leap year.
+        -:   66:    // if (year % 100 == 0)			// Divisible by 100?
+        -:   67:	//     return false;				// Not a leap year.
+        -:   68:    // if (year % 4 == 0)				// Divisible by 4?
+        -:   69:    // 	return true;				// It’s a leap year.
+        -:   70:    // return false;				// Boring old ordinary year.
+        -:   71:
+        -:   72:    // could use a bitwise AND operator
+        -:   73:    // like this ((year & 3) == 0 && ((year % 25) != 0 || (year & 15) == 0))
+        -:   74:    // if the compiler have no optimization
+        -:   75:    // but the compiler has optimized so it make no difference whatsoever
+        -:   76:    // beside, using the modulo is more clearer.
+        -:   77:    // and now we only do check once instead of three times.
+   328410:   78:    return (year % 400 == 0) || ( ( year % 100 != 0) && (year % 4 == 0 ));
+        -:   79:}

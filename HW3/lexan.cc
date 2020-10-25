@@ -10,11 +10,11 @@
 
 
 Lexan::Lexan(std::string src)
-    : m_src(src)
+	: m_src(src)
 {
-    try { read(); }
-    catch(const std::runtime_error& e){}   
-    
+	try { read(); }
+	catch(const std::runtime_error& e){}   
+	
 }
 
 //
@@ -23,7 +23,7 @@ Lexan::Lexan(std::string src)
 //
 //
 Lexan::Lexan(const Lexan& other)
-    :m_src(other.m_src), m_cur(other.m_cur), m_buf(other.m_buf), m_tokens(other.m_tokens)
+	:m_src(other.m_src), m_cur(other.m_cur), m_buf(other.m_buf), m_tokens(other.m_tokens)
 {
 }
 
@@ -36,11 +36,11 @@ Lexan::Lexan(const Lexan& other)
 //
 Lexan &Lexan::operator=(Lexan &other)
 {
-    std::swap(m_src, other.m_src);
-    std::swap(m_cur, other.m_cur);
-    std::swap(m_buf, other.m_buf);
-    m_tokens = other.m_tokens;
-    return *this;
+	std::swap(m_src, other.m_src);
+	std::swap(m_cur, other.m_cur);
+	std::swap(m_buf, other.m_buf);
+	m_tokens = other.m_tokens;
+	return *this;
 }
 
 //
@@ -52,70 +52,70 @@ Lexan &Lexan::operator=(Lexan &other)
 //
 void Lexan::read()
 {
-    std::stringstream in(m_src);
-    std::string line;
-    while (std::getline(in, line)){
-        m_cur = rm_ws_cm_tolow(line);
-        lexing();
-    }
+	std::stringstream in(m_src);
+	std::string line;
+	while (std::getline(in, line)){
+		m_cur = rm_ws_cm_tolow(line);
+		lexing();
+	}
 }
 
 void Lexan::lexing()
 {
-    std::stringstream tok(m_cur);
-    char c;
-    while(tok.get(c)){
-        if (isdigit(c)){
-            m_buf += c;
-            while (isdigit(tok.peek()) && m_buf.length() < 15){
-                c = tok.get();
-                m_buf += c;
-            }
-            m_tokens.emplace_back(m_buf);
-            m_buf.clear();
-        }
+	std::stringstream tok(m_cur);
+	char c;
+	while(tok.get(c)){
+		if (isdigit(c)){
+			m_buf += c;
+			while (isdigit(tok.peek()) && m_buf.length() < 15){
+				c = tok.get();
+				m_buf += c;
+			}
+			m_tokens.emplace_back(m_buf);
+			m_buf.clear();
+		}
 
-        if (isalpha(c)){
-            m_buf += c;
-            while (isalpha(tok.peek())){
-                c = tok.get();
-                m_buf += c;
-                if (match_key()){ 
-                    m_tokens.emplace_back(m_buf); 
-                    break;
-                }
-            }
-            if (!match_key()) { 
-                m_tokens.emplace_back(std::string{1, m_buf.at(0)});
-                if (m_buf[1] != '\0'){ m_tokens.emplace_back(std::string{1, m_buf.at(1)}); }
-            }
-            m_buf.clear();
-            
-        }
+		if (isalpha(c)){
+			m_buf += c;
+			while (isalpha(tok.peek())){
+				c = tok.get();
+				m_buf += c;
+				if (match_key()){ 
+					m_tokens.emplace_back(m_buf); 
+					break;
+				}
+			}
+			if (!match_key()) { 
+				m_tokens.emplace_back(std::string{1, m_buf.at(0)});
+				if (m_buf[1] != '\0'){ m_tokens.emplace_back(std::string{1, m_buf.at(1)}); }
+			}
+			m_buf.clear();
+			
+		}
 
-        if (ispunct(c)){
-            m_buf += c;
-            if (tok.peek() == '='){
-                c = tok.get();
-                m_buf += c;
-            }
-            if (match_oper()){ m_tokens.emplace_back(m_buf); }
-            m_buf.clear();
-        }
-        
-        if (c > 128 || tok.peek() > 128){
-            m_buf += c;
-            while (c > 128 || tok.peek() > 128){
-                c = tok.get(); m_buf += c;
-                c = tok.get(); m_buf += c;
-                c = tok.get(); m_buf += c;
-                m_buf = m_buf.substr(1,4);
-                if (weird_oper()){ m_tokens.emplace_back(m_buf); }	
-            }
-            m_buf.clear();
-        }
+		if (ispunct(c)){
+			m_buf += c;
+			if (tok.peek() == '='){
+				c = tok.get();
+				m_buf += c;
+			}
+			if (match_oper()){ m_tokens.emplace_back(m_buf); }
+			m_buf.clear();
+		}
+		
+		if (c > 128 || tok.peek() > 128){
+			m_buf += c;
+			while (c > 128 || tok.peek() > 128){
+				c = tok.get(); m_buf += c;
+				c = tok.get(); m_buf += c;
+				c = tok.get(); m_buf += c;
+				m_buf = m_buf.substr(1,4);
+				if (weird_oper()){ m_tokens.emplace_back(m_buf); }	
+			}
+			m_buf.clear();
+		}
 
-    }
+	}
 
 }
 
@@ -128,13 +128,13 @@ void Lexan::lexing()
 //
 bool Lexan::match_key()
 {
-    for (auto &k : m_keywords){
-        if (m_buf == k){ 
-            return true; 
-            break;
-        }
-    }
-    return false;
+	for (auto &k : m_keywords){
+		if (m_buf == k){ 
+			return true; 
+			break;
+		}
+	}
+	return false;
 }
 
 
@@ -146,13 +146,13 @@ bool Lexan::match_key()
 //
 bool Lexan::match_oper()
 {
-    for (auto &o : m_oper){
-        if (m_buf == o){ 
-            return true; 
-            break;
-        }
-    }
-    return false;
+	for (auto &o : m_oper){
+		if (m_buf == o){ 
+			return true; 
+			break;
+		}
+	}
+	return false;
 }
 
 
@@ -164,18 +164,18 @@ bool Lexan::match_oper()
 //
 bool Lexan::weird_oper()
 {
-    for (auto &w : m_uni){
-        if (m_buf == w){
-            return true;
-            break;
-        }
-    }
-    return false;
+	for (auto &w : m_uni){
+		if (m_buf == w){
+			return true;
+			break;
+		}
+	}
+	return false;
 }
 
 size_t Lexan::size() const
 {
-    return m_tokens.size();
+	return m_tokens.size();
 }
 
 //
@@ -186,17 +186,17 @@ size_t Lexan::size() const
 //
 std::string Lexan::operator[](size_t i) const
 {
-    return m_tokens.at(i);
+	return m_tokens.at(i);
 }
 
 void Lexan::clear()
 {
-    m_tokens.clear();
+	m_tokens.clear();
 }
 
 bool Lexan::empty()
 {
-    return m_tokens.empty();
+	return m_tokens.empty();
 }
 
 //
@@ -211,11 +211,11 @@ bool Lexan::empty()
 //
 std::string Lexan::rm_ws_cm_tolow(std::string &line)
 {
-    auto com = line.find("#");
-    if (com != std::string::npos) { line.erase(com); } 
-    line.erase(remove_if(line.begin(), line.end(), ::isspace), line.end());
-    for (auto &c : line) { c = tolower(c); }
-    return line;
+	auto com = line.find("#");
+	if (com != std::string::npos) { line.erase(com); } 
+	line.erase(remove_if(line.begin(), line.end(), ::isspace), line.end());
+	for (auto &c : line) { c = tolower(c); }
+	return line;
 }
 
 //
@@ -226,13 +226,13 @@ std::string Lexan::rm_ws_cm_tolow(std::string &line)
 //
 std::ostream &operator<<(std::ostream &out, const Lexan &other)
 {
-    bool f = true;
-    for (auto &s : other.m_tokens){
-        if (!f) { out << ","; }
-        f = false;
-        out << s;
-    }
-    return out;
+	bool f = true;
+	for (auto &s : other.m_tokens){
+		if (!f) { out << ","; }
+		f = false;
+		out << s;
+	}
+	return out;
 }
 
 //
@@ -242,5 +242,5 @@ std::ostream &operator<<(std::ostream &out, const Lexan &other)
 //
 Lexan::~Lexan()
 {
-    m_tokens.clear();
+	m_tokens.clear();
 }

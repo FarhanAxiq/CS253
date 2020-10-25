@@ -1,0 +1,699 @@
+1.  this is because malloc (which the function redefined new as) 
+    has no idea as to what data type you are really allocating; 
+    it just allocates raw memory. 
+    Returning a void* guarantees that you cast the pointer 
+    to something  (maybe an object type). Returning any other 
+    pointer type would risk that 
+    you forget to cast the pointer to what it really points to.
+$ g++ -std=c++17  -Wall  glob.cc -o glob.o
+$ ./glob.o
+new(8) returns 0x55d568907eb0
+new(4000) returns 0x55d5689082e0
+delete(0x55d568907eb0, 8)
+delete(0x55d5689082e0, 4000)
+$
+
+2.
+// allocate *p on a heap, 
+// this uses non-overloaded implementation
+// it isn't defined in the class
+// which is also why it didn't appear on the output
+double *p = new double; 
+
+//
+//  This uses the class overloaded implementation
+//  As it is defined for the object in the class
+//  and also why we see it appear on the output
+//
+Foo *q = new Foo;
+Foo *r = new Foo;
+
+// same as *p reason above
+delete p;
+
+// same as Foo *q and Foo *r reason above
+delete q;
+delete r;
+
+//  static member functions match targets of 
+//  function pointer type or 
+//  reference to function type
+//  but despite that
+//  "The keyword static is optional for these functions:
+//  whether used or not, the allocation 
+//  function is a static member function." -
+//  Standard for Programming Language C++ ISO/IEC
+$ g++ -std=c++17 -Wall class.cc -o class.o
+$ ./class.o
+new(4000) returns 0x56161b225ed0
+new(4000) returns 0x56161b227290
+delete(0x56161b225ed0, 4000)
+delete(0x56161b227290, 4000)
+$
+
+3.  it's private, therefore the new function is inacessible
+    thus failed to compile
+$ g++ -std=c++17 -Wall forbid1.cc -o forbid1.o
+forbid1.cc: In function ‘int main()’:
+forbid1.cc:16:13: error: ‘static void* Foo::operator new(std::size_t)’ is private within this context
+   16 |     p = new Foo;
+      |             ^~~
+forbid1.cc:7:18: note: declared private here
+    7 |     static void *operator new(std::size_t);
+      |                  ^~~~~~~~
+$ 
+
+4.  We setting the function to delete
+    basically disabling the function altogether
+    now it is more useless than ever
+$ g++ -std=c++17 -Wall forbid2.cc -o forbid2.o               
+forbid2.cc: In function ‘int main()’:
+forbid2.cc:17:13: error: use of deleted function ‘static void* Foo::operator new(std::size_t)’
+   17 |     p = new Foo;
+      |             ^~~
+forbid2.cc:8:18: note: declared here
+    8 |     static void *operator new(std::size_t) = delete;
+      |                  ^~~~~~~~
+
+5.  same as above
+    why protected?
+    so, it can be accessible in the 
+    class that defines them and 
+    in classes that inherit from that class.
+$ g++ -std=c++17 -Wall forbid-mixin.cc -o forbid-mixin.o     
+forbid-mixin.cc: In function ‘int main()’:
+forbid-mixin.cc:20:13: error: use of deleted function ‘static void* NoNewDelete::operator new(std::size_t)’
+   20 |     p = new Foo;
+      |             ^~~
+forbid-mixin.cc:8:18: note: declared here
+    8 |     static void *operator new(std::size_t) = delete;
+      |                  ^~~~~~~~
+
+6.  there's few way
+    a. by using smart pointer so you can avoid all this together
+    b. set a state after deleting the pointer, this can be done by assigning the deleted
+       pointer to nullptr after deleting them
+       if the object is nullptr, we can confirm it is deleted successfully
+       
+$ g++ -std=c++17 -Wall errchk.cc -o errchk.o
+$ ./errchk.o
+new(4000) returns 0x558c8d825ed0
+delete(0x558c8d825ed0, 4000)
+delete(0x7fff6dda987c, 4000)
+ERROR: attempt to delete a Foo, but 0x7fff6dda987c is out of range.
+
+7.  std::byte with C++17
+    why?
+    "Like char and unsigned char, 
+    it can be used to access raw memory occupied by other objects (object representation), 
+    but unlike those types, it is not a character type and is not an arithmetic type."
+    https://en.cppreference.com/w/cpp/types/byte/ 
+
+
+$ g++ -std=c++17 -Wall scrub.cc -o scrub.o
+$ ./scrub.o
+new(4) returns 0x5624d70cbeb0
+Our int is: 1903260017
+new(8) returns 0x5624d70cc2e0
+Our double is: 2.83963e+238
+delete(0x5624d70cbeb0, 4)
+delete(0x5624d70cc2e0, 8)
+
+
+8.  sizeof class Foo = 8
+    sizeof class Bar = 8
+    but really, it depend on:
+    -Size of all non-static data members
+    -Order of data members
+    -Byte alignment or byte padding
+    -Size of its immediate base class
+    -The existence of virtual function(s) (Dynamic polymorphism using virtual functions).
+    -Compiler being used
+    -Mode of inheritance (virtual inheritance)
+    src: https://www.cprogramming.com/tutorial/size_of_class_object.html/ 
+    in this case, both of them have a member variable of type double, and in gcc the sizeof double
+    is 8 (again, it's compiler dependent, answer may vary)
+
+    p and q have a different of 0
+    why?
+    since we didnt store the value anywhere (using container or such), 
+    once the class finish the scope
+    the item in that scope leaked and become dangling
+    pointer, now it is inaccessible once its left the scope
+    which is why the address for both p and q is the same.
+
+
+    r and s have a different of 8
+    why?
+    in this case, we store them in a linked list using 
+    union
+    and since in that union list, there's an array defined
+    and array is guarantee to be contigous 
+    therefore, we see it store the value of sizeof datum
+    and the value will be side by side
+    and since the value of sizeof (at least in gcc implementation)
+    double is 8, hence it store 1st element address and the 2nd element is
+    + 8 of the 1st element address
+
+$ g++ -std=c++17 -Wall normal.cc -o normal.o
+$ ./normal.o
+sizeof(double) = 8
+sizeof(Foo) = 8
+p=0x5564b579a2c0
+q=0x5564b579a2e0
+$ g++ -std=c++17 -Wall pool.cc -o pool.o
+$ ./pool.o
+sizeof(double) = 8
+sizeof(Bar) = 8
+r=0x56106f6112c0
+s=0x56106f6112c8
+
+9.  it is possible and will inherit it fine
+    but may fail if sizeof(Bar) > sizeof(Foo)
+    as the implementation of operator new in 
+    the base class is called but it cannot handle
+    the bigger Bar size as it only allocate memory 
+    of size Foo but not Bar.
+
+    we can create a single class that handle that
+    so it know to choose default global operator new 
+    or the class defined one.
+
+10. normal is faster than pool, this is probably due to pool have
+    more thing involved such as having to loop through array 
+
+$ g++ -std=c++17 -Wall normal.cc -o normal.o
+$ ./normal.o
+sizeof(double) = 8
+sizeof(Foo) = 8
+p=0x565061f3f2c0
+q=0x565061f3f2e0
+Time taken by function: 34 microseconds
+
+$ ./pool.o
+sizeof(double) = 8
+sizeof(Bar) = 8
+r=0x55847b2db2c0
+s=0x55847b2db2c8
+Time taken by function: 67 microseconds
+
+
+11. it seems that the normal uses more memory on heap than  
+    the pool, this is because in case of pool, we allocate
+    to a size bigger than we need. while with normal, it's compiler dependent
+    the ratio I got and i don't know how to simplify thing
+    292.3:278.8
+
+$ ms_print massif.out.5701
+--------------------------------------------------------------------------------
+Command:            ./normal.cc
+Massif arguments:   (none)
+ms_print arguments: massif.out.5701
+--------------------------------------------------------------------------------
+
+
+    KB
+1.594^                                                     #:  ::   :  :@  ::
+     |                                                     #:  ::   :  :@  :::
+     |                                                     #:  ::   :  :@  :::
+     |                                                     #:  ::   :  :@  :::
+     |                                                     #:  ::   :  :@  :::
+     |                                                     #:  ::   :  :@  :::
+     |                                                     #:  ::   :  :@  :::
+     |                                                 ::::#::::@:::::::@::::@
+     |                                                 : : #:: :@:  :: :@: ::@
+     |                                                 : : #:: :@:  :: :@: ::@
+     |                                                :: : #:: :@:  :: :@: ::@
+     |                                                @: : #:: :@:  :: :@: ::@
+     |                                                @: : #:: :@:  :: :@: ::@
+     |                                                @: : #:: :@:  :: :@: ::@
+     |                                                @: : #:: :@:  :: :@: ::@
+     |                                             :::@: : #:: :@:  :: :@: ::@
+     |                                             @  @: : #:: :@:  :: :@: ::@
+     |                                            :@  @: : #:: :@:  :: :@: ::@
+     |                                            :@  @: : #:: :@:  :: :@: ::@
+     |                                            :@  @: : #:: :@:  :: :@: ::@
+   0 +----------------------------------------------------------------------->ki
+     0                                                                   292.3
+
+Number of snapshots: 62
+ Detailed snapshots: [9, 19, 29 (peak), 39, 49, 59]
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+  0              0                0                0             0            0
+  1        184,323               40               32             8            0
+  2        184,589               80               64            16            0
+  3        184,860              120               96            24            0
+  4        185,370              160              128            32            0
+  5        185,617              200              160            40            0
+  6        186,108              240              192            48            0
+  7        186,427              280              224            56            0
+  8        186,674              320              256            64            0
+  9        187,098              360              288            72            0
+80.00% (288B) (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+->80.00% (288B) 0x116D4C: ??? (in /usr/bin/dash)
+  ->80.00% (288B) 0x11E4F8: ??? (in /usr/bin/dash)
+    ->80.00% (288B) 0x11F16C: ??? (in /usr/bin/dash)
+      ->80.00% (288B) 0x10DB73: ??? (in /usr/bin/dash)
+        ->80.00% (288B) 0x48790B2: (below main) (libc-start.c:308)
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+ 10        187,295              400              320            80            0
+ 11        187,542              440              352            88            0
+ 12        199,915              480              384            96            0
+ 13        200,234              520              416           104            0
+ 14        200,481              560              448           112            0
+ 15        200,838              600              480           120            0
+ 16        201,109              640              512           128            0
+ 17        201,495              680              544           136            0
+ 18        201,718              720              576           144            0
+ 19        202,161              760              608           152            0
+80.00% (608B) (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+->80.00% (608B) 0x116D4C: ??? (in /usr/bin/dash)
+  ->80.00% (608B) 0x11E4F8: ??? (in /usr/bin/dash)
+    ->80.00% (608B) 0x11F16C: ??? (in /usr/bin/dash)
+      ->80.00% (608B) 0x10DB73: ??? (in /usr/bin/dash)
+        ->80.00% (608B) 0x48790B2: (below main) (libc-start.c:308)
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+ 20        202,504              800              640           160            0
+ 21        202,799              840              672           168            0
+ 22        203,357              880              704           176            0
+ 23        203,766              920              736           184            0
+ 24        205,094              960              768           192            0
+ 25        205,398            1,016              816           200            0
+ 26        205,622            1,088              868           220            0
+ 27        212,193            1,112              884           228            0
+ 28        222,975            1,632            1,396           236            0
+ 29        224,183            1,632            1,396           236            0
+85.54% (1,396B) (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+->51.23% (836B) 0x116D4C: ??? (in /usr/bin/dash)
+| ->47.06% (768B) 0x11E4F8: ??? (in /usr/bin/dash)
+| | ->45.10% (736B) 0x11F16C: ??? (in /usr/bin/dash)
+| | | ->45.10% (736B) 0x10DB73: ??? (in /usr/bin/dash)
+| | |   ->45.10% (736B) 0x48790B2: (below main) (libc-start.c:308)
+| | |
+| | ->01.96% (32B) 0x11F1BB: ??? (in /usr/bin/dash)
+| |   ->01.96% (32B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->01.96% (32B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->03.19% (52B) 0x11E634: ??? (in /usr/bin/dash)
+| | ->03.19% (52B) 0x11F1E0: ??? (in /usr/bin/dash)
+| |   ->03.19% (52B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->03.19% (52B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->00.98% (16B) in 1+ places, all below ms_print's threshold (01.00%)
+|
+->31.37% (512B) 0x116E16: ??? (in /usr/bin/dash)
+| ->31.37% (512B) 0x11C45C: ??? (in /usr/bin/dash)
+|   ->31.37% (512B) 0x11C8A9: ??? (in /usr/bin/dash)
+|     ->31.37% (512B) 0x11C997: ??? (in /usr/bin/dash)
+|       ->31.37% (512B) 0x10F242: ??? (in /usr/bin/dash)
+|         ->31.37% (512B) 0x10F50C: ??? (in /usr/bin/dash)
+|           ->31.37% (512B) 0x1117C2: ??? (in /usr/bin/dash)
+|             ->31.37% (512B) 0x11064E: ??? (in /usr/bin/dash)
+|               ->31.37% (512B) 0x10F716: ??? (in /usr/bin/dash)
+|                 ->31.37% (512B) 0x116B1B: ??? (in /usr/bin/dash)
+|                   ->31.37% (512B) 0x10DC81: ??? (in /usr/bin/dash)
+|                     ->31.37% (512B) 0x48790B2: (below main) (libc-start.c:308)
+|
+->02.94% (48B) 0x48F450E: strdup (strdup.c:42)
+  ->02.94% (48B) 0x116DAC: ??? (in /usr/bin/dash)
+    ->02.94% (48B) 0x10EC4C: ??? (in /usr/bin/dash)
+      ->02.94% (48B) 0x11F1E0: ??? (in /usr/bin/dash)
+        ->02.94% (48B) 0x10DB73: ??? (in /usr/bin/dash)
+          ->02.94% (48B) 0x48790B2: (below main) (libc-start.c:308)
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+ 30        224,183            1,112              884           228            0
+ 31        225,268            1,632            1,396           236            0
+ 32        226,355            1,112              884           228            0
+ 33        226,572            1,088              868           220            0
+ 34        230,095            1,112              884           228            0
+ 35        240,929            1,632            1,396           236            0
+ 36        242,137            1,112              884           228            0
+ 37        243,222            1,632            1,396           236            0
+ 38        244,309            1,112              884           228            0
+ 39        244,526            1,088              868           220            0
+79.78% (868B) (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+->75.37% (820B) 0x116D4C: ??? (in /usr/bin/dash)
+| ->70.59% (768B) 0x11E4F8: ??? (in /usr/bin/dash)
+| | ->67.65% (736B) 0x11F16C: ??? (in /usr/bin/dash)
+| | | ->67.65% (736B) 0x10DB73: ??? (in /usr/bin/dash)
+| | |   ->67.65% (736B) 0x48790B2: (below main) (libc-start.c:308)
+| | |
+| | ->02.94% (32B) 0x11F1BB: ??? (in /usr/bin/dash)
+| |   ->02.94% (32B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->02.94% (32B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->04.78% (52B) 0x11E634: ??? (in /usr/bin/dash)
+| | ->04.78% (52B) 0x11F1E0: ??? (in /usr/bin/dash)
+| |   ->04.78% (52B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->04.78% (52B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->00.00% (0B) in 1+ places, all below ms_print's threshold (01.00%)
+|
+->04.41% (48B) 0x48F450E: strdup (strdup.c:42)
+| ->04.41% (48B) 0x116DAC: ??? (in /usr/bin/dash)
+|   ->04.41% (48B) 0x10EC4C: ??? (in /usr/bin/dash)
+|     ->04.41% (48B) 0x11F1E0: ??? (in /usr/bin/dash)
+|       ->04.41% (48B) 0x10DB73: ??? (in /usr/bin/dash)
+|         ->04.41% (48B) 0x48790B2: (below main) (libc-start.c:308)
+|
+->00.00% (0B) in 1+ places, all below ms_print's threshold (01.00%)
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+ 40        247,287            1,112              884           228            0
+ 41        257,954            1,632            1,396           236            0
+ 42        259,162            1,112              884           228            0
+ 43        260,243            1,632            1,396           236            0
+ 44        261,326            1,112              884           228            0
+ 45        261,543            1,088              868           220            0
+ 46        263,528            1,112              884           228            0
+ 47        273,303            1,632            1,396           236            0
+ 48        274,511            1,112              884           228            0
+ 49        275,602            1,632            1,396           236            0
+85.54% (1,396B) (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+->51.23% (836B) 0x116D4C: ??? (in /usr/bin/dash)
+| ->47.06% (768B) 0x11E4F8: ??? (in /usr/bin/dash)
+| | ->45.10% (736B) 0x11F16C: ??? (in /usr/bin/dash)
+| | | ->45.10% (736B) 0x10DB73: ??? (in /usr/bin/dash)
+| | |   ->45.10% (736B) 0x48790B2: (below main) (libc-start.c:308)
+| | |
+| | ->01.96% (32B) 0x11F1BB: ??? (in /usr/bin/dash)
+| |   ->01.96% (32B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->01.96% (32B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->03.19% (52B) 0x11E634: ??? (in /usr/bin/dash)
+| | ->03.19% (52B) 0x11F1E0: ??? (in /usr/bin/dash)
+| |   ->03.19% (52B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->03.19% (52B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->00.98% (16B) in 1+ places, all below ms_print's threshold (01.00%)
+|
+->31.37% (512B) 0x116E16: ??? (in /usr/bin/dash)
+| ->31.37% (512B) 0x11C45C: ??? (in /usr/bin/dash)
+|   ->31.37% (512B) 0x11C8A9: ??? (in /usr/bin/dash)
+|     ->31.37% (512B) 0x10F250: ??? (in /usr/bin/dash)
+|     | ->31.37% (512B) 0x10F50C: ??? (in /usr/bin/dash)
+|     |   ->31.37% (512B) 0x1117C2: ??? (in /usr/bin/dash)
+|     |     ->31.37% (512B) 0x11064E: ??? (in /usr/bin/dash)
+|     |       ->31.37% (512B) 0x10F716: ??? (in /usr/bin/dash)
+|     |         ->31.37% (512B) 0x116B1B: ??? (in /usr/bin/dash)
+|     |           ->31.37% (512B) 0x10DC81: ??? (in /usr/bin/dash)
+|     |             ->31.37% (512B) 0x48790B2: (below main) (libc-start.c:308)
+|     |
+|     ->00.00% (0B) in 1+ places, all below ms_print's threshold (01.00%)
+|
+->02.94% (48B) 0x48F450E: strdup (strdup.c:42)
+  ->02.94% (48B) 0x116DAC: ??? (in /usr/bin/dash)
+    ->02.94% (48B) 0x10EC4C: ??? (in /usr/bin/dash)
+      ->02.94% (48B) 0x11F1E0: ??? (in /usr/bin/dash)
+        ->02.94% (48B) 0x10DB73: ??? (in /usr/bin/dash)
+          ->02.94% (48B) 0x48790B2: (below main) (libc-start.c:308)
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+ 50        276,695            1,112              884           228            0
+ 51        276,912            1,088              868           220            0
+ 52        279,546            1,112              884           228            0
+ 53        289,874            1,632            1,396           236            0
+ 54        291,082            1,112              884           228            0
+ 55        292,172            1,632            1,396           236            0
+ 56        293,264            1,112              884           228            0
+ 57        293,481            1,088              868           220            0
+ 58        296,204            1,608            1,380           228            0
+ 59        297,431            1,088              868           220            0
+79.78% (868B) (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+->75.37% (820B) 0x116D4C: ??? (in /usr/bin/dash)
+| ->70.59% (768B) 0x11E4F8: ??? (in /usr/bin/dash)
+| | ->67.65% (736B) 0x11F16C: ??? (in /usr/bin/dash)
+| | | ->67.65% (736B) 0x10DB73: ??? (in /usr/bin/dash)
+| | |   ->67.65% (736B) 0x48790B2: (below main) (libc-start.c:308)
+| | |
+| | ->02.94% (32B) 0x11F1BB: ??? (in /usr/bin/dash)
+| |   ->02.94% (32B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->02.94% (32B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->04.78% (52B) 0x11E634: ??? (in /usr/bin/dash)
+| | ->04.78% (52B) 0x11F1E0: ??? (in /usr/bin/dash)
+| |   ->04.78% (52B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->04.78% (52B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->00.00% (0B) in 1+ places, all below ms_print's threshold (01.00%)
+|
+->04.41% (48B) 0x48F450E: strdup (strdup.c:42)
+| ->04.41% (48B) 0x116DAC: ??? (in /usr/bin/dash)
+|   ->04.41% (48B) 0x10EC4C: ??? (in /usr/bin/dash)
+|     ->04.41% (48B) 0x11F1E0: ??? (in /usr/bin/dash)
+|       ->04.41% (48B) 0x10DB73: ??? (in /usr/bin/dash)
+|         ->04.41% (48B) 0x48790B2: (below main) (libc-start.c:308)
+|
+->00.00% (0B) in 1+ places, all below ms_print's threshold (01.00%)
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+ 60        298,353            1,608            1,380           228            0
+ 61        299,277            1,088              868           220            0
+
+
+
+$ ms_print massif.out.5702
+--------------------------------------------------------------------------------
+Command:            ./pool.cc
+Massif arguments:   (none)
+ms_print arguments: massif.out.5702
+--------------------------------------------------------------------------------
+
+
+    KB
+1.594^                                                        #   ::   :  :@
+     |                                                        #   ::   :  :@ :
+     |                                                        #   ::   :  :@ :
+     |                                                        #   ::   :  :@ :
+     |                                                        #   ::   :  :@ :
+     |                                                        #   ::   :  :@ :
+     |                                                        #   ::   :  :@ :
+     |                                                   :::::#::::@:::::::@::
+     |                                                   : :  #:: :@:  :: :@ :
+     |                                                   : :  #:: :@:  :: :@ :
+     |                                                   : :  #:: :@:  :: :@ :
+     |                                                  @: :  #:: :@:  :: :@ :
+     |                                                  @: :  #:: :@:  :: :@ :
+     |                                                  @: :  #:: :@:  :: :@ :
+     |                                                  @: :  #:: :@:  :: :@ :
+     |                                               :::@: :  #:: :@:  :: :@ :
+     |                                               @  @: :  #:: :@:  :: :@ :
+     |                                               @  @: :  #:: :@:  :: :@ :
+     |                                              :@  @: :  #:: :@:  :: :@ :
+     |                                              :@  @: :  #:: :@:  :: :@ :
+   0 +----------------------------------------------------------------------->ki
+     0                                                                   278.8
+
+Number of snapshots: 56
+ Detailed snapshots: [9, 19, 29 (peak), 39, 49]
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+  0              0                0                0             0            0
+  1        184,329               40               32             8            0
+  2        184,595               80               64            16            0
+  3        184,866              120               96            24            0
+  4        185,376              160              128            32            0
+  5        185,623              200              160            40            0
+  6        186,114              240              192            48            0
+  7        186,433              280              224            56            0
+  8        186,680              320              256            64            0
+  9        187,104              360              288            72            0
+80.00% (288B) (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+->80.00% (288B) 0x116D4C: ??? (in /usr/bin/dash)
+  ->80.00% (288B) 0x11E4F8: ??? (in /usr/bin/dash)
+    ->80.00% (288B) 0x11F16C: ??? (in /usr/bin/dash)
+      ->80.00% (288B) 0x10DB73: ??? (in /usr/bin/dash)
+        ->80.00% (288B) 0x48790B2: (below main) (libc-start.c:308)
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+ 10        187,301              400              320            80            0
+ 11        187,548              440              352            88            0
+ 12        199,921              480              384            96            0
+ 13        200,240              520              416           104            0
+ 14        200,487              560              448           112            0
+ 15        200,844              600              480           120            0
+ 16        201,115              640              512           128            0
+ 17        201,501              680              544           136            0
+ 18        201,724              720              576           144            0
+ 19        202,167              760              608           152            0
+80.00% (608B) (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+->80.00% (608B) 0x116D4C: ??? (in /usr/bin/dash)
+  ->80.00% (608B) 0x11E4F8: ??? (in /usr/bin/dash)
+    ->80.00% (608B) 0x11F16C: ??? (in /usr/bin/dash)
+      ->80.00% (608B) 0x10DB73: ??? (in /usr/bin/dash)
+        ->80.00% (608B) 0x48790B2: (below main) (libc-start.c:308)
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+ 20        202,510              800              640           160            0
+ 21        202,805              840              672           168            0
+ 22        203,363              880              704           176            0
+ 23        203,772              920              736           184            0
+ 24        205,100              960              768           192            0
+ 25        205,409            1,016              816           200            0
+ 26        205,633            1,088              868           220            0
+ 27        212,204            1,112              884           228            0
+ 28        222,976            1,632            1,396           236            0
+ 29        224,174            1,632            1,396           236            0
+85.54% (1,396B) (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+->51.23% (836B) 0x116D4C: ??? (in /usr/bin/dash)
+| ->47.06% (768B) 0x11E4F8: ??? (in /usr/bin/dash)
+| | ->45.10% (736B) 0x11F16C: ??? (in /usr/bin/dash)
+| | | ->45.10% (736B) 0x10DB73: ??? (in /usr/bin/dash)
+| | |   ->45.10% (736B) 0x48790B2: (below main) (libc-start.c:308)
+| | |
+| | ->01.96% (32B) 0x11F1BB: ??? (in /usr/bin/dash)
+| |   ->01.96% (32B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->01.96% (32B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->03.19% (52B) 0x11E634: ??? (in /usr/bin/dash)
+| | ->03.19% (52B) 0x11F1E0: ??? (in /usr/bin/dash)
+| |   ->03.19% (52B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->03.19% (52B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->00.98% (16B) in 1+ places, all below ms_print's threshold (01.00%)
+|
+->31.37% (512B) 0x116E16: ??? (in /usr/bin/dash)
+| ->31.37% (512B) 0x11C45C: ??? (in /usr/bin/dash)
+|   ->31.37% (512B) 0x11C8A9: ??? (in /usr/bin/dash)
+|     ->31.37% (512B) 0x11C997: ??? (in /usr/bin/dash)
+|       ->31.37% (512B) 0x10F242: ??? (in /usr/bin/dash)
+|         ->31.37% (512B) 0x10F50C: ??? (in /usr/bin/dash)
+|           ->31.37% (512B) 0x1117C2: ??? (in /usr/bin/dash)
+|             ->31.37% (512B) 0x11064E: ??? (in /usr/bin/dash)
+|               ->31.37% (512B) 0x10F716: ??? (in /usr/bin/dash)
+|                 ->31.37% (512B) 0x116B1B: ??? (in /usr/bin/dash)
+|                   ->31.37% (512B) 0x10DC81: ??? (in /usr/bin/dash)
+|                     ->31.37% (512B) 0x48790B2: (below main) (libc-start.c:308)
+|
+->02.94% (48B) 0x48F450E: strdup (strdup.c:42)
+  ->02.94% (48B) 0x116DAC: ??? (in /usr/bin/dash)
+    ->02.94% (48B) 0x10EC4C: ??? (in /usr/bin/dash)
+      ->02.94% (48B) 0x11F1E0: ??? (in /usr/bin/dash)
+        ->02.94% (48B) 0x10DB73: ??? (in /usr/bin/dash)
+          ->02.94% (48B) 0x48790B2: (below main) (libc-start.c:308)
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+ 30        224,174            1,112              884           228            0
+ 31        225,259            1,632            1,396           236            0
+ 32        226,346            1,112              884           228            0
+ 33        226,563            1,088              868           220            0
+ 34        230,135            1,112              884           228            0
+ 35        240,959            1,632            1,396           236            0
+ 36        242,157            1,112              884           228            0
+ 37        243,242            1,632            1,396           236            0
+ 38        244,329            1,112              884           228            0
+ 39        244,546            1,088              868           220            0
+79.78% (868B) (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+->75.37% (820B) 0x116D4C: ??? (in /usr/bin/dash)
+| ->70.59% (768B) 0x11E4F8: ??? (in /usr/bin/dash)
+| | ->67.65% (736B) 0x11F16C: ??? (in /usr/bin/dash)
+| | | ->67.65% (736B) 0x10DB73: ??? (in /usr/bin/dash)
+| | |   ->67.65% (736B) 0x48790B2: (below main) (libc-start.c:308)
+| | |
+| | ->02.94% (32B) 0x11F1BB: ??? (in /usr/bin/dash)
+| |   ->02.94% (32B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->02.94% (32B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->04.78% (52B) 0x11E634: ??? (in /usr/bin/dash)
+| | ->04.78% (52B) 0x11F1E0: ??? (in /usr/bin/dash)
+| |   ->04.78% (52B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->04.78% (52B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->00.00% (0B) in 1+ places, all below ms_print's threshold (01.00%)
+|
+->04.41% (48B) 0x48F450E: strdup (strdup.c:42)
+| ->04.41% (48B) 0x116DAC: ??? (in /usr/bin/dash)
+|   ->04.41% (48B) 0x10EC4C: ??? (in /usr/bin/dash)
+|     ->04.41% (48B) 0x11F1E0: ??? (in /usr/bin/dash)
+|       ->04.41% (48B) 0x10DB73: ??? (in /usr/bin/dash)
+|         ->04.41% (48B) 0x48790B2: (below main) (libc-start.c:308)
+|
+->00.00% (0B) in 1+ places, all below ms_print's threshold (01.00%)
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+ 40        247,307            1,112              884           228            0
+ 41        257,964            1,632            1,396           236            0
+ 42        259,162            1,112              884           228            0
+ 43        260,243            1,632            1,396           236            0
+ 44        261,326            1,112              884           228            0
+ 45        261,543            1,088              868           220            0
+ 46        263,528            1,112              884           228            0
+ 47        273,293            1,632            1,396           236            0
+ 48        274,491            1,112              884           228            0
+ 49        275,582            1,632            1,396           236            0
+85.54% (1,396B) (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+->51.23% (836B) 0x116D4C: ??? (in /usr/bin/dash)
+| ->47.06% (768B) 0x11E4F8: ??? (in /usr/bin/dash)
+| | ->45.10% (736B) 0x11F16C: ??? (in /usr/bin/dash)
+| | | ->45.10% (736B) 0x10DB73: ??? (in /usr/bin/dash)
+| | |   ->45.10% (736B) 0x48790B2: (below main) (libc-start.c:308)
+| | |
+| | ->01.96% (32B) 0x11F1BB: ??? (in /usr/bin/dash)
+| |   ->01.96% (32B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->01.96% (32B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->03.19% (52B) 0x11E634: ??? (in /usr/bin/dash)
+| | ->03.19% (52B) 0x11F1E0: ??? (in /usr/bin/dash)
+| |   ->03.19% (52B) 0x10DB73: ??? (in /usr/bin/dash)
+| |     ->03.19% (52B) 0x48790B2: (below main) (libc-start.c:308)
+| |
+| ->00.98% (16B) in 1+ places, all below ms_print's threshold (01.00%)
+|
+->31.37% (512B) 0x116E16: ??? (in /usr/bin/dash)
+| ->31.37% (512B) 0x11C45C: ??? (in /usr/bin/dash)
+|   ->31.37% (512B) 0x11C8A9: ??? (in /usr/bin/dash)
+|     ->31.37% (512B) 0x10F250: ??? (in /usr/bin/dash)
+|     | ->31.37% (512B) 0x10F50C: ??? (in /usr/bin/dash)
+|     |   ->31.37% (512B) 0x1117C2: ??? (in /usr/bin/dash)
+|     |     ->31.37% (512B) 0x11064E: ??? (in /usr/bin/dash)
+|     |       ->31.37% (512B) 0x10F716: ??? (in /usr/bin/dash)
+|     |         ->31.37% (512B) 0x116B1B: ??? (in /usr/bin/dash)
+|     |           ->31.37% (512B) 0x10DC81: ??? (in /usr/bin/dash)
+|     |             ->31.37% (512B) 0x48790B2: (below main) (libc-start.c:308)
+|     |
+|     ->00.00% (0B) in 1+ places, all below ms_print's threshold (01.00%)
+|
+->02.94% (48B) 0x48F450E: strdup (strdup.c:42)
+  ->02.94% (48B) 0x116DAC: ??? (in /usr/bin/dash)
+    ->02.94% (48B) 0x10EC4C: ??? (in /usr/bin/dash)
+      ->02.94% (48B) 0x11F1E0: ??? (in /usr/bin/dash)
+        ->02.94% (48B) 0x10DB73: ??? (in /usr/bin/dash)
+          ->02.94% (48B) 0x48790B2: (below main) (libc-start.c:308)
+
+--------------------------------------------------------------------------------
+  n        time(i)         total(B)   useful-heap(B) extra-heap(B)    stacks(B)
+--------------------------------------------------------------------------------
+ 50        276,675            1,112              884           228            0
+ 51        276,892            1,088              868           220            0
+ 52        282,459            1,608            1,380           228            0
+ 53        283,657            1,088              868           220            0
+ 54        284,575            1,608            1,380           228            0
+ 55        285,495            1,088              868           220            0

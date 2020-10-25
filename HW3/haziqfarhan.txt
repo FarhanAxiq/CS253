@@ -1,0 +1,285 @@
+Score: 3.40/4.00 points
+Graded by Miller Ridgeway <millerridgeway@CS.ColoState.Edu>
+
+Summary of all tests:
+  Value  Result  Test  Description
+   0.50  pass       1  unpack
+   0.50  pass       2  libhw3.a created
+   1.00  pass       3  no warnings
+   0.10  pass       4  -Wall used
+   0.20  pass       5  no C I/O, system calls, or dynamic memory
+   0.10  pass       6  no ASCII constants
+   0.10  pass       7  no namespace in header
+   0.10  FAIL       8  bad number
+   0.10  FAIL       9  bad input to lexer results in runtime error
+   0.10  pass      10  default constructor must fail to compile
+   0.10  pass      11  ignoring return values for size/empty results in compilation errors
+   0.10  pass      12  blank input
+   0.10  pass      13  const method on const object
+   0.10  FAIL      14  simple input
+   0.10  FAIL      15  unicode input and <<
+   0.10  pass      16  clear and empty
+   0.10  pass      17  number tokenization
+   0.10  pass      18  operator tokenization
+   0.10  pass      19  size is correct
+   0.10  FAIL      20  copy constructor
+   0.10  FAIL      21  assignment operator
+   0.10  pass      22  globals
+   3.40                Total
+Passed 16 tests, failed 6 tests.
+
+Details of individual tests:
+
+Executing: tar -xvvf submissions_hw3/haziqfarhan_175027_16861284_hw3.tar -C Build
+Exit code: 0
+Standard output (4 lines):
+	-rwxrwxrwx farhan/farhan  3656 2020-10-10 21:19 Lexan.cc
+	-rwxrwxrwx farhan/farhan  1147 2020-10-10 20:26 Lexan.h
+	-rwxrwxrwx farhan/farhan 2823228 2020-10-10 21:37 libhw3.a
+	-rwxrwxrwx farhan/farhan     965 2020-10-10 21:37 CMakeLists.txt
+Standard error is empty
+
+Test 1: unpack
+Status: pass
+Condition: [[ -r Build/CMakeLists.txt ]]
+Value: 0.50
+
+Executing: cmake . && make
+Exit code: 0
+Standard output (10/23 lines):
+	-- The C compiler identification is GNU 9.3.1
+	-- The CXX compiler identification is GNU 9.3.1
+	-- Check for working C compiler: /usr/bin/cc
+	-- Check for working C compiler: /usr/bin/cc - works
+	-- Detecting C compiler ABI info
+	-- Detecting C compiler ABI info - done
+	-- Detecting C compile features
+	-- Detecting C compile features - done
+	-- Check for working CXX compiler: /usr/bin/c++
+	-- Check for working CXX compiler: /usr/bin/c++ - works
+	… and 13 more lines …
+Standard error is empty
+
+Test 2: libhw3.a created
+Status: pass
+Condition: [[ -r Build/libhw3.a ]]
+Value: 0.50
+
+Test 3: no warnings
+Status: pass
+Condition: ! grep -qi warning stdout stderr
+Value: 1.00
+
+Test 4: -Wall used
+Status: pass
+Condition: grep -q 'add_compile_options.*-Wall\b' Build/CMakeLists.txt
+Value: 0.10
+Contents of file Build/CMakeLists.txt (10/28 lines, missing final newline):
+	cmake_minimum_required(VERSION 3.14)
+	project(hw3)
+	 
+	# Are we in the wrong directory?
+	if(CMAKE_SOURCE_DIR MATCHES "[Hh][Ww]([0-9])$")
+	   if(PROJECT_NAME MATCHES "[^${CMAKE_MATCH_1}]$")
+	      message(FATAL_ERROR "Building ${PROJECT_NAME} in ${CMAKE_SOURCE_DIR}")
+	   endif()
+	endif()
+	 
+	… and 18 more lines …
+
+Test 5: no C I/O, system calls, or dynamic memory
+Status: pass
+Condition: Don’t use: system fork popen execl execlp execle execv execvp execvpe printf scanf fopen getchar malloc calloc realloc free strdup eof
+Value: 0.20
+
+Test 6: no ASCII constants
+Status: pass
+Condition: ! grep -P '\b[4-9]\d\b' Build/Lexan.cc
+Value: 0.10
+
+Test 7: no namespace in header
+Status: pass
+Condition: ! grep -qi 'using namespace' Build/Lexan.h
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/bad_number.cc libhw3.a && ./a.out
+Exit code: 0
+Standard output (1 line):
+	123456123345123,123122534534534,5345
+Standard error is empty
+
+Test 8: bad number
+Status: FAIL
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/bad_input.cc libhw3.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 9: bad input to lexer results in runtime error
+Status: FAIL
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/default_ctor_fail.cc libhw3.a
+Exit code: 1
+Standard output is empty
+Standard error (5 lines):
+	/home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/default_ctor_fail.cc: In function 'int main()':
+	/home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/default_ctor_fail.cc:7:11: error: no matching function for call to 'Lexan::Lexan()'
+	    7 |     Lexan lex;
+	      |           ^~~
+	compilation terminated due to -Wfatal-errors.
+
+Test 10: default constructor must fail to compile
+Status: pass
+Condition: grep -qi 'no matching function' stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/ignore_ret_val.cc libhw3.a
+Exit code: 1
+Standard output is empty
+Standard error (10/12 lines):
+	/home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/ignore_ret_val.cc: In function 'int main()':
+	/home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/ignore_ret_val.cc:8:13: warning: ignoring return value of 'size_t Lexan::size() const', declared with attribute nodiscard [-Wunused-result]
+	    8 |     lex.size();
+	      |     ~~~~~~~~^~
+	In file included from /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/ignore_ret_val.cc:1:
+	./Lexan.h:37:23: note: declared here
+	   37 |  [[nodiscard]] size_t size() const;
+	      |                       ^~~~
+	/home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/ignore_ret_val.cc:9:15: error: passing 'const Lexan' as 'this' argument discards qualifiers [-fpermissive]
+	    9 |     lex.empty();
+	… and 2 more lines …
+
+Test 11: ignoring return values for size/empty results in compilation errors
+Status: pass
+Condition: grep -qi 'attribute nodiscard' stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/simple.cc libhw3.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 12: blank input
+Status: pass
+Condition: empty stdout stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/const_lexan.cc libhw3.a && ./a.out
+Exit code: 0
+Standard output (controls chars as ^X) (1 line):
+	\001a
+Standard error is empty
+
+Test 13: const method on const object
+Status: pass
+Condition: empty stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/simple_input.cc libhw3.a && ./a.out
+Exit code: 0
+Standard output (controls chars as ^X) (5 lines):
+	\001a
+	=
+	2
+	\001a
+	+=
+Standard error is empty
+
+Test 14: simple input
+Status: FAIL
+Condition: exact $'a\n=\n2\na\n+=\\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/unicode_input.cc libhw3.a && ./a.out
+Exit code: 0
+Standard output (controls chars as ^X) (10 lines):
+	\001a
+	≠
+	\001b
+	\001b
+	≤
+	\001c
+	\001d
+	≥
+	\001z
+	\001a,≠,\001b,\001b,≤,\001c,\001d,≥,\001z
+Standard error is empty
+
+Test 15: unicode input and <<
+Status: FAIL
+Condition: exact $'a\n≠\nb\nb\n≤\nc\nd\n≥\nz\na,≠,b,b,≤,c,d,≥,z\\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/clear_and_empty.cc libhw3.a && ./a.out
+Exit code: 0
+Standard output (1 line):
+	1
+Standard error is empty
+
+Test 16: clear and empty
+Status: pass
+Condition: exact '1\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/numerical_tokenize.cc libhw3.a && ./a.out
+Exit code: 0
+Standard output (1 line):
+	123451234512345
+Standard error is empty
+
+Test 17: number tokenization
+Status: pass
+Condition: exact '123451234512345\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/operator.cc libhw3.a && ./a.out
+Exit code: 0
+Standard output (1 line):
+	print,if,fi
+Standard error is empty
+
+Test 18: operator tokenization
+Status: pass
+Condition: exact 'print,if,fi\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/size.cc libhw3.a && ./a.out
+Exit code: 0
+Standard output (1 line):
+	1
+Standard error is empty
+
+Test 19: size is correct
+Status: pass
+Condition: exact '1\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/copy_ctor.cc libhw3.a && ./a.out
+Exit code: 0
+Standard output (controls chars as ^X) (1 line):
+	\001a
+Standard error is empty
+
+Test 20: copy constructor
+Status: FAIL
+Condition: exact 'a\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw3-tests/assign_operator.cc libhw3.a && ./a.out
+Exit code: 0
+Standard output (controls chars as ^X) (1 line):
+	\001a,\001b
+Standard error is empty
+
+Test 21: assignment operator
+Status: FAIL
+Condition: exact 'a,b\n' stdout
+Value: 0.10
+
+Test 22: globals
+Status: pass
+Condition: No globals other than program_name
+Value: 0.10

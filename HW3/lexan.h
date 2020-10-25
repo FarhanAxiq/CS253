@@ -18,29 +18,29 @@
 class Lexan
 {
 private:
-    std::string m_src;
-    std::string m_cur;
-    std::string m_buf;
-    std::vector<std::string> m_tokens;
-    const std::vector<std::string> m_keywords{"if", "fi", "print", "return"};
-    const std::vector<std::string> m_oper {"+=", "-=", "*=", "/=", "=", "<", ">"};   
-    const std::vector<std::string> m_uni{"≠", "≤", "≥"};
+	std::string m_src;
+	std::string m_cur;
+	std::string m_buf;
+	std::vector<std::string> m_tokens;
+	const std::vector<std::string> m_keywords{"if", "fi", "print", "return"};
+	const std::vector<std::string> m_oper {"+=", "-=", "*=", "/=", "=", "<", ">"};   
+	const std::vector<std::string> m_uni{"≠", "≤", "≥"};
 public:
-    Lexan(std::string);
-    Lexan(const Lexan&);
-    Lexan &operator=(Lexan&);
-    void read();
-    void lexing();
-    bool match_key();
-    bool match_oper();
-    bool weird_oper();
-    [[nodiscard]] size_t size() const;
-    [[nodiscard]] bool empty();
-    void clear();
-    std::string operator[](size_t) const;
-    std::string rm_ws_cm_tolow(std::string &);
-    friend std::ostream &operator<<(std::ostream &, const Lexan &);
-    ~Lexan();
+	Lexan(std::string);
+	Lexan(const Lexan&);
+	Lexan &operator=(Lexan&);
+	void read();
+	void lexing();
+	bool match_key();
+	bool match_oper();
+	bool weird_oper();
+	[[nodiscard]] size_t size() const;
+	[[nodiscard]] bool empty();
+	void clear();
+	std::string operator[](size_t) const;
+	std::string rm_ws_cm_tolow(std::string &);
+	friend std::ostream &operator<<(std::ostream &, const Lexan &);
+	~Lexan();
 };
 
 

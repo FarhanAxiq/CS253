@@ -1,0 +1,240 @@
+Score: 3.90/4.00 points
+Graded by Miller Ridgeway <millerridgeway@CS.ColoState.Edu>
+
+Summary of all tests:
+  Value  Result  Test  Description
+   0.50  pass       1  unpack
+   0.50  pass       2  builds
+   1.00  pass       3  no warnings
+   0.10  pass       4  -Wall used
+   0.10  pass       5  no dynamic memory
+   0.10  pass       6  no ASCII constants
+   0.10  pass       7  no .eof()
+   0.10  pass       8  no external programs
+   0.10  pass       9  no C I/O
+   0.10  FAIL      10  error message to stderr with program name (invalid char)
+   0.20  pass      11  error message to stderr with file name
+   0.20  pass      12  input is at least 2x2
+   0.20  pass      13  input has consistent line lengths
+   0.10  pass      14  simple input (no wraparound, no double)
+   0.10  pass      15  simple input from checkerboard file
+   0.20  pass      16  multiple iteration input
+   0.20  pass      17  complex input
+   0.10  pass      18  globals
+   3.90                Total
+Passed 17 tests, failed 1 test.
+
+Details of individual tests:
+
+Executing: tar -xvvf submissions_hw2/haziqfarhan_LATE_175027_16660196_hw2-1.tar -C Build
+Exit code: 0
+Standard output (2 lines):
+	-rwxrwxrwx farhan/farhan  3502 2020-09-27 00:10 HW2.cc
+	-rw-r--r-- millerridgeway/millerridgeway 1113 2020-10-07 12:08 CMakeLists.txt
+Standard error is empty
+
+Test 1: unpack
+Status: pass
+Condition: [[ -r Build/CMakeLists.txt ]]
+Value: 0.50
+
+Executing: cmake . && make
+Exit code: 0
+Standard output (10/23 lines):
+	-- The C compiler identification is GNU 9.3.1
+	-- The CXX compiler identification is GNU 9.3.1
+	-- Check for working C compiler: /usr/bin/cc
+	-- Check for working C compiler: /usr/bin/cc - works
+	-- Detecting C compiler ABI info
+	-- Detecting C compiler ABI info - done
+	-- Detecting C compile features
+	-- Detecting C compile features - done
+	-- Check for working CXX compiler: /usr/bin/c++
+	-- Check for working CXX compiler: /usr/bin/c++ - works
+	… and 13 more lines …
+Standard error is empty
+
+Test 2: builds
+Status: pass
+Condition: [[ -r Build/hw2 ]]
+Value: 0.50
+
+Test 3: no warnings
+Status: pass
+Condition: ! grep -qi warning stdout stderr
+Value: 1.00
+
+Test 4: -Wall used
+Status: pass
+Condition: grep -q 'add_compile_options.*-Wall\b' Build/CMakeLists.txt
+Value: 0.10
+Contents of file Build/CMakeLists.txt (10/32 lines):
+	cmake_minimum_required(VERSION 3.14)
+	project(hw2)
+	
+	# Are we in the wrong directory?
+	if(CMAKE_SOURCE_DIR MATCHES "[Hh][Ww]([0-9])$")
+	   if(PROJECT_NAME MATCHES "[^${CMAKE_MATCH_1}]$")
+	      message(FATAL_ERROR "Building ${PROJECT_NAME} in ${CMAKE_SOURCE_DIR}")
+	   endif()
+	endif()
+	
+	… and 22 more lines …
+
+Test 5: no dynamic memory
+Status: pass
+Condition: ! grep -q '=\s*new\b' Build/HW2.cc
+Value: 0.10
+
+Test 6: no ASCII constants
+Status: pass
+Condition: ! grep -P '\b[4-9]\d\b' Build/HW2.cc
+Value: 0.10
+
+Test 7: no .eof()
+Status: pass
+Condition: ! grep -Pq '\b(if|while)\s*\(.*\.eof\(\).*\)' Build/HW2.cc
+Value: 0.10
+
+Test 8: no external programs
+Status: pass
+Condition: Don’t use: system fork popen 'exec.*'
+Value: 0.10
+
+Test 9: no C I/O
+Status: pass
+Condition: Don’t use: '[fs]?(print|scan)f' puts fopen stdin stdout
+Value: 0.10
+
+Executing: cp Build/hw2 Build/pineapple
+Exit code: 0
+Standard output and standard error are both empty
+
+Executing: printf '..\n.$\n' | Build/pineapple
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	The board generated is not a valid board.
+
+Test 10: error message to stderr with program name (invalid char)
+Status: FAIL
+Condition: grep -qi pineapple stderr
+Value: 0.10
+
+Executing: Build/hw2 thisFileDoesNotExist.txt
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	thisFileDoesNotExist.txt cannot be open
+
+Test 11: error message to stderr with file name
+Status: pass
+Condition: grep -qi thisFileDoesNotExist stderr
+Value: 0.20
+
+Executing: printf '.\n.\n' | Build/hw2
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	The board generated is not a valid board.
+
+Test 12: input is at least 2x2
+Status: pass
+Condition: ! empty stderr
+Value: 0.20
+
+Executing: printf '..O.\n..\n' | Build/hw2
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	The board generated is not a valid board.
+
+Test 13: input has consistent line lengths
+Status: pass
+Condition: ! empty stderr
+Value: 0.20
+
+Executing: printf '.....
+.OOO.
+.....
+.OOO.
+.....\n' | Build/hw2
+Exit code: 0
+Standard output (5 lines):
+	..O..
+	..O..
+	.....
+	..O..
+	..O..
+Standard error is empty
+
+Test 14: simple input (no wraparound, no double)
+Status: pass
+Condition: exact $'..O..\n..O..\n.....\n..O..\n..O..\\n' stdout
+Value: 0.10
+
+Executing: printf '.....
+.OOO.
+.....
+.OOO.
+.....\n' >checkerboard; Build/hw2 checkerboard
+Exit code: 0
+Standard output (5 lines):
+	..O..
+	..O..
+	.....
+	..O..
+	..O..
+Standard error is empty
+
+Test 15: simple input from checkerboard file
+Status: pass
+Condition: exact $'..O..\n..O..\n.....\n..O..\n..O..\\n' stdout
+Value: 0.10
+
+Executing: printf '.....
+.OOO.
+.....
+.OOO.
+.....\n' | Build/hw2 | Build/hw2 | Build/hw2
+Exit code: 0
+Standard output (5 lines):
+	.O.O.
+	..O..
+	.....
+	..O..
+	.O.O.
+Standard error is empty
+
+Test 16: multiple iteration input
+Status: pass
+Condition: exact $'.O.O.\n..O..\n.....\n..O..\n.O.O.\\n' stdout
+Value: 0.20
+
+Executing: printf 'OO.....O..O
+OOOO...O...
+O.OOO..O...
+.O.........
+OOO.O..O...
+OO..O..O...
+OO.....O..O\n' | Build/hw2
+Exit code: 0
+Standard output (7 lines):
+	......OOO..
+	....O.OOO..
+	O...O......
+	....O......
+	..OO.......
+	...O..OOO..
+	..O...OOO..
+Standard error is empty
+
+Test 17: complex input
+Status: pass
+Condition: exact $'......OOO..\n....O.OOO..\nO...O......\n....O......\n..OO.......\n...O..OOO..\n..O...OOO..\\n' stdout
+Value: 0.20
+
+Test 18: globals
+Status: pass
+Condition: No globals other than program_name
+Value: 0.10
