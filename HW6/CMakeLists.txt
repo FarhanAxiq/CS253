@@ -11,13 +11,8 @@ endif()
 # Using -Wall is required:
 add_compile_options(-Wall)
  
-# These compile flags are highly recommended, but not required:
-
-# Optional super-strict mode:
 add_compile_options(-fmessage-length=80 -fno-diagnostics-show-option
     -fstack-protector-all -g -O3 -std=c++17 -Wall)
- 
-# add_compile_options must be BEFORE add_executable.
  
 # Create the executable from the source file main.cc:
 add_library(${PROJECT_NAME} Rule.cc Rule.h Board.cc Board.h)

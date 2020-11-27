@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW6/Board.cc
+Board.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW6/Board.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW6/Board.h
+Rule.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW6/Rule.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW6/Rule.cc
+Rule.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW6/Rule.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW6/Rule.h
+iostream
+-
+fstream
+-
+string
+-
+vector
+-
+stdexcept
+-
+algorithm
+-
+

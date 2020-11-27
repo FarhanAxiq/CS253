@@ -14,7 +14,7 @@
 using namespace std;
  
 int main() {
-    Rule r;
+     Rule r;
     assert(r.golly() == "B3/S23");
     r.golly("B1357/S2468");
     assert(r.golly() == "B1357/S2468");
@@ -30,8 +30,7 @@ int main() {
     cout << g2 << '\n';
     cout << ++g2 << '\n';
     cout << ++g2 << "\n\n";
- 
-    // change this to something testable
+
     Board g3("test3"); 
     for (int i=0; i<500; i++)
         ++g3;

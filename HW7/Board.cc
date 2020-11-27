@@ -1,5 +1,5 @@
 //
-//  HW6
+//  HW7
 //  Board.cc
 //  Farhan Haziq
 //
