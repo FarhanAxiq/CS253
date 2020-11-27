@@ -1,0 +1,50 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW5/Jail.cc
+Jail.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW5/Jail.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW5/Jail.h
+iostream
+-
+sstream
+-
+algorithm
+-
+vector
+-
+string
+-
+stdexcept
+-
+utility
+-
+Lexan.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW5/Lexan.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW5/Lexan.cc
+Lexan.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW5/Lexan.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW5/Lexan.h
+iostream
+-
+sstream
+-
+algorithm
+-
+vector
+-
+string
+-
+stdexcept
+-
+utility
+-
+

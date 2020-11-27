@@ -1,0 +1,4 @@
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW5/CMakeFiles/rebuild_cache.dir
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW5/CMakeFiles/edit_cache.dir
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW5/CMakeFiles/hw5.tar.dir
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW5/CMakeFiles/hw5.dir

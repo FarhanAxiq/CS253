@@ -3,7 +3,7 @@
 //  lexan.cc
 //  Farhan Haziq
 //  fargah1@cs.colostate.edu
-//  2020 October 10
+//  2020 Novembre 10
 //
 
 #include "Lexan.h" 

@@ -1,0 +1,378 @@
+Score: 3.72/4.00 points
+Graded by Miller Ridgeway <millerridgeway@CS.ColoState.Edu>
+
+Summary of all tests:
+  Value  Result  Test  Description
+   0.50  pass       1  unpack
+   0.50  pass       2  builds
+   1.00  pass       3  no warnings
+   0.10  pass       4  -Wall used
+   0.10  pass       5  no C I/O, system calls, dynamic memory, or eof
+   0.10  pass       6  globals
+   0.10  FAIL       7  error message to stderr with program name (invalid char)
+   0.10  pass       8  error message to stderr with file name
+   0.10  pass       9  input is at least 2x2
+   0.10  pass      10  input has consistent line lengths
+   0.10  pass      11  bad option given
+   0.10  pass      12  multiple of the same options
+   0.10  pass      13  improper argument given to option/no space after args
+   0.10  pass      14  multiple file names present
+   0.10  pass      15  options must precede filename
+   0.10  pass      16  missing b in golly rule
+   0.10  pass      17  missing s in golly rule
+   0.10  pass      18  missing / in golly rule
+   0.02  FAIL      19  extra arguments to golly rule
+   0.02  FAIL      20  digits in golly arguments not in ascending order
+   0.02  FAIL      21  non-digits given to golly rule
+   0.02  FAIL      22  digit 9 is invalid in golly rule
+   0.02  pass      23  0 digit in golly rule
+   0.10  pass      24  simple input (no options specified)
+   0.10  pass      25  live and dead chars
+   0.10  pass      26  golly valid input
+   0.10  FAIL      27  infinite flag & option bundling
+   3.72                Total
+Passed 21 tests, failed 6 tests.
+
+Details of individual tests:
+
+Executing: tar -xvvf submissions_hw4/haziqfarhan_175027_17082335_hw4.tar -C Build
+Exit code: 0
+Standard output (3 lines):
+	-rwxrwxrwx farhan/farhan  5873 2020-10-24 20:28 GameOfLife.cc
+	-rwxrwxrwx farhan/farhan   937 2020-10-24 19:43 GameOfLife.h
+	-rwxrwxrwx farhan/farhan   659 2020-10-24 20:08 CMakeLists.txt
+Standard error is empty
+
+Test 1: unpack
+Status: pass
+Condition: [[ -r Build/CMakeLists.txt ]]
+Value: 0.50
+
+Executing: cmake . && make
+Exit code: 0
+Standard output (10/23 lines):
+	-- The C compiler identification is GNU 9.3.1
+	-- The CXX compiler identification is GNU 9.3.1
+	-- Check for working C compiler: /usr/bin/cc
+	-- Check for working C compiler: /usr/bin/cc - works
+	-- Detecting C compiler ABI info
+	-- Detecting C compiler ABI info - done
+	-- Detecting C compile features
+	-- Detecting C compile features - done
+	-- Check for working CXX compiler: /usr/bin/c++
+	-- Check for working CXX compiler: /usr/bin/c++ - works
+	… and 13 more lines …
+Standard error is empty
+
+Test 2: builds
+Status: pass
+Condition: [[ -r Build/hw4 ]]
+Value: 0.50
+
+Test 3: no warnings
+Status: pass
+Condition: ! grep -qi warning stdout stderr
+Value: 1.00
+
+Test 4: -Wall used
+Status: pass
+Condition: grep -q 'add_compile_options.*-Wall\b' Build/CMakeLists.txt
+Value: 0.10
+Contents of file Build/CMakeLists.txt (10/20 lines, missing final newline):
+	cmake_minimum_required(VERSION 3.14)
+	project(hw4)
+	
+	# Are we in the wrong directory?
+	if(CMAKE_SOURCE_DIR MATCHES "[Hh][Ww]([0-9])$")
+	   if(PROJECT_NAME MATCHES "[^${CMAKE_MATCH_1}]$")
+	      message(FATAL_ERROR "Building ${PROJECT_NAME} in ${CMAKE_SOURCE_DIR}")
+	   endif()
+	endif()
+	
+	… and 10 more lines …
+
+Test 5: no C I/O, system calls, dynamic memory, or eof
+Status: pass
+Condition: Don’t use: system fork popen execl execlp execle execv execvp execvpe printf scanf fopen getchar malloc calloc realloc free strdup eof
+Value: 0.10
+
+Test 6: globals
+Status: pass
+Condition: No globals other than program_name
+Value: 0.10
+
+Executing: cp Build/hw4 Build/pear
+Exit code: 0
+Standard output and standard error are both empty
+
+Executing: printf '..\n.$\n' | Build/pear
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	The board generated is not a valid board.
+
+Test 7: error message to stderr with program name (invalid char)
+Status: FAIL
+Condition: grep -qi pear stderr
+Value: 0.10
+
+Executing: Build/hw4 thisFileDoesNotExist.txt
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	thisFileDoesNotExist.txt cannot be open
+
+Test 8: error message to stderr with file name
+Status: pass
+Condition: grep -qi thisFileDoesNotExist stderr
+Value: 0.10
+
+Executing: printf '.\n.\n' | Build/hw4
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	The board generated is not a valid board.
+
+Test 9: input is at least 2x2
+Status: pass
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: printf '..O.\n..\n' | Build/hw4
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	The board generated is not a valid board.
+
+Test 10: input has consistent line lengths
+Status: pass
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: printf '..\n..\n' | Build/hw4 -q
+Exit code: 1
+Standard output is empty
+Standard error (2 lines):
+	Build/hw4: invalid option -- 'q'
+	Usage: Build/hw4 [-g golly] [-d] dead [-l] alive [-i] loop [-file]
+
+Test 11: bad option given
+Status: pass
+Condition: grep -qi q stderr
+Value: 0.10
+
+Executing: printf '..\n..\n' | Build/hw4 -d @ -d %
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	The board generated is not a valid board.
+
+Test 12: multiple of the same options
+Status: pass
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: printf '..\n..\n' | Build/hw4 -g%
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	Build/hw4 : invalid character has been found
+
+Test 13: improper argument given to option/no space after args
+Status: pass
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: Build/hw4 -d @ checkerboard checkerboard
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	The board generated is not a valid board.
+
+Test 14: multiple file names present
+Status: pass
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: Build/hw4 -d @ checkerboard -l.
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	The board generated is not a valid board.
+
+Test 15: options must precede filename
+Status: pass
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: printf '..\n..\n' | Build/hw4 -g23/S34
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	Build/hw4 : invalid character has been found
+
+Test 16: missing b in golly rule
+Status: pass
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: printf '..\n..\n' | Build/hw4 -gB23/34
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	Invalid born or survive value
+
+Test 17: missing s in golly rule
+Status: pass
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: printf '..\n..\n' | Build/hw4 -gB23S34
+Exit code: 1
+Standard output is empty
+Standard error (1 line):
+	Invalid born or survive value
+
+Test 18: missing / in golly rule
+Status: pass
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: printf '..\n..\n' | Build/hw4 -gB23/S34XYZ
+Exit code: 0
+Standard output (2 lines):
+	..
+	..
+Standard error is empty
+
+Test 19: extra arguments to golly rule
+Status: FAIL
+Condition: ! empty stderr
+Value: 0.02
+
+Executing: printf '..\n..\n' | Build/hw4 -gB23/S41
+Exit code: 0
+Standard output (2 lines):
+	..
+	..
+Standard error is empty
+
+Test 20: digits in golly arguments not in ascending order
+Status: FAIL
+Condition: ! empty stderr
+Value: 0.02
+
+Executing: printf '..\n..\n' | Build/hw4 -gBX3/S34
+Exit code: 0
+Standard output (2 lines):
+	..
+	..
+Standard error is empty
+
+Test 21: non-digits given to golly rule
+Status: FAIL
+Condition: ! empty stderr
+Value: 0.02
+
+Executing: printf '..\n..\n' | Build/hw4 -gB23/S39
+Exit code: 0
+Standard output (2 lines):
+	..
+	..
+Standard error is empty
+
+Test 22: digit 9 is invalid in golly rule
+Status: FAIL
+Condition: ! empty stderr
+Value: 0.02
+
+Executing: printf '.....
+.OO..
+..OO.
+.OO..
+.....\n' | Build/hw4 -g B04/S23
+Exit code: 0
+Standard output (5 lines):
+	....O
+	.OO..
+	...O.
+	.OO..
+	....O
+Standard error is empty
+
+Test 23: 0 digit in golly rule
+Status: pass
+Condition: exact $'....O\n.OO..\n...O.\n.OO..\n....O\\n' stdout
+Value: 0.02
+
+Executing: printf '.....
+.OO..
+..OO.
+.OO..
+.....\n' | Build/hw4
+Exit code: 0
+Standard output (5 lines):
+	.....
+	.OOO.
+	...O.
+	.OOO.
+	.....
+Standard error is empty
+
+Test 24: simple input (no options specified)
+Status: pass
+Condition: exact $'.....\n.OOO.\n...O.\n.OOO.\n.....\\n' stdout
+Value: 0.10
+
+Executing: printf 'aaaaa
+azzaa
+aazza
+azzaa
+aaaaa\n' | Build/hw4 -l z -d a
+Exit code: 0
+Standard output (5 lines):
+	aaaaa
+	azzza
+	aaaza
+	azzza
+	aaaaa
+Standard error is empty
+
+Test 25: live and dead chars
+Status: pass
+Condition: exact $'aaaaa\nazzza\naaaza\nazzza\naaaaa\\n' stdout
+Value: 0.10
+
+Executing: printf '.....
+.OO..
+..OO.
+.OO..
+.....\n' | Build/hw4 -g B14/S23
+Exit code: 0
+Standard output (5 lines):
+	O..O.
+	OOO.O
+	...OO
+	OOO.O
+	O..O.
+Standard error is empty
+
+Test 26: golly valid input
+Status: pass
+Condition: exact $'O..O.\nOOO.O\n...OO\nOOO.O\nO..O.\\n' stdout
+Value: 0.10
+
+Executing: printf '.....
+.OO..
+..OO.
+.OO..
+.....\n' | Build/hw4 -igB14/S23 | head -9
+Exit code: 0
+Standard output is empty
+Standard error (1 line):
+	-igB14/S23 cannot be open
+
+Test 27: infinite flag & option bundling
+Status: FAIL
+Condition: exact $'O..O.\nOOO.O\n...OO\nOOO.O\nO..O.\n\n..OO.\n.OO..\n.....\\n' stdout
+Value: 0.10
