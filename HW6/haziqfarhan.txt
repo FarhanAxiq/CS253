@@ -1,0 +1,235 @@
+Score: 3.70/4.00 points
+Graded by Miller Ridgeway <millerridgeway@CS.ColoState.Edu>
+
+Summary of all tests:
+  Value  Result  Test  Description
+   0.50  pass       1  unpack
+   0.50  pass       2  libhw6.a created
+   1.00  pass       3  no warnings
+   0.10  pass       4  -Wall used
+   0.10  pass       5  no C I/O, system calls, or dynamic memory
+   0.10  pass       6  no ASCII constants
+   0.10  pass       7  no namespace in header
+   0.10  pass       8  globals
+   0.10  FAIL       9  Board throws runtime error given non-existing file
+   0.10  pass      10  Board throws runtime error given invalid file
+   0.10  FAIL      11  Const rule/board work
+   0.10  pass      12  Rule class .golly() function valid examples
+   0.10  FAIL      13  Rule class .eval() function valid examples
+   0.10  pass      14  Board class constructor valid examples
+   0.20  pass      15  Basic preincrement case (no special char, single iter)
+   0.20  pass      16  Multiple preincrement case (no special char)
+   0.20  pass      17  Custom rule stored in Board (no error)
+   0.20  pass      18  Custom rule stored in Board (no change after conway call)
+   0.10  pass      19  Preincrement with special char
+   3.70                Total
+Passed 16 tests, failed 3 tests.
+
+Details of individual tests:
+
+Executing: tar -xvvf submissions_hw6/haziqfarhan_175027_17484915_hw6.tar -C Build
+Exit code: 0
+Standard output (6 lines):
+	-rwxrwxrwx farhan/farhan  2742 2020-11-27 14:14 Rule.cc
+	-rwxrwxrwx farhan/farhan   647 2020-11-27 14:13 Rule.h
+	-rwxrwxrwx farhan/farhan  4273 2020-11-27 14:11 Board.cc
+	-rwxrwxrwx farhan/farhan   815 2020-11-27 14:10 Board.h
+	-rwxrwxrwx farhan/farhan 2063208 2020-11-27 14:15 libhw6.a
+	-rwxrwxrwx farhan/farhan     845 2020-11-27 13:54 CMakeLists.txt
+Standard error is empty
+
+Test 1: unpack
+Status: pass
+Condition: [[ -r Build/CMakeLists.txt ]]
+Value: 0.50
+
+Executing: cmake . && make
+Exit code: 0
+Standard output (10/24 lines):
+	-- The C compiler identification is GNU 9.3.1
+	-- The CXX compiler identification is GNU 9.3.1
+	-- Check for working C compiler: /usr/bin/cc
+	-- Check for working C compiler: /usr/bin/cc - works
+	-- Detecting C compiler ABI info
+	-- Detecting C compiler ABI info - done
+	-- Detecting C compile features
+	-- Detecting C compile features - done
+	-- Check for working CXX compiler: /usr/bin/c++
+	-- Check for working CXX compiler: /usr/bin/c++ - works
+	… and 14 more lines …
+Standard error is empty
+
+Test 2: libhw6.a created
+Status: pass
+Condition: [[ -r Build/libhw6.a ]]
+Value: 0.50
+
+Test 3: no warnings
+Status: pass
+Condition: ! grep -qi warning stdout stderr
+Value: 1.00
+
+Test 4: -Wall used
+Status: pass
+Condition: grep -q 'add_compile_options.*-Wall\b' Build/CMakeLists.txt
+Value: 0.10
+Contents of file Build/CMakeLists.txt (10/23 lines, missing final newline):
+	cmake_minimum_required(VERSION 3.14)
+	project(hw6)
+	 
+	# Are we in the wrong directory?
+	if(CMAKE_SOURCE_DIR MATCHES "[Hh][Ww]([0-9])$")
+	   if(PROJECT_NAME MATCHES "[^${CMAKE_MATCH_1}]$")
+	      message(FATAL_ERROR "Building ${PROJECT_NAME} in ${CMAKE_SOURCE_DIR}")
+	   endif()
+	endif()
+	 
+	… and 13 more lines …
+
+Test 5: no C I/O, system calls, or dynamic memory
+Status: pass
+Condition: Don’t use: system fork popen execl execlp execle execv execvp execvpe printf scanf fopen getchar malloc calloc realloc free strdup eof
+Value: 0.10
+
+Test 6: no ASCII constants
+Status: pass
+Condition: ! grep -P '\b[4-9]\d\b' Build/Board.cc Build/Rule.cc
+Value: 0.10
+
+Test 7: no namespace in header
+Status: pass
+Condition: ! grep -qi 'using namespace' Build/Board.h Build/Rule.h
+Value: 0.10
+
+Test 8: globals
+Status: pass
+Condition: No globals other than program_name
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw6-tests/bad_board_input.cc libhw6.a && ./a.out
+Exit code: 139 (SIGSEGV)
+Standard output and standard error are both empty
+
+Test 9: Board throws runtime error given non-existing file
+Status: FAIL
+Condition: grep -qi sweetest stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw6-tests/bad_board_lines.cc libhw6.a && ./a.out
+Exit code: 134 (SIGABRT)
+Standard output is empty
+Standard error (2 lines):
+	terminate called after throwing an instance of 'std::runtime_error'
+	  what():  Invalid board generated from the file /home/millerridgeway/test_boards/bad_board
+
+Test 10: Board throws runtime error given invalid file
+Status: pass
+Condition: grep -qi bad_board stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw6-tests/const_correct.cc libhw6.a && ./a.out
+Exit code: 1
+Standard output is empty
+Standard error (5 lines):
+	/home/millerridgeway/Projects/253_Grading/Grader/hw6-tests/const_correct.cc: In function 'int main()':
+	/home/millerridgeway/Projects/253_Grading/Grader/hw6-tests/const_correct.cc:9:21: error: passing 'const Rule' as 'this' argument discards qualifiers [-fpermissive]
+	    9 |     cout << r.golly() << "\n";
+	      |                     ^
+	compilation terminated due to -Wfatal-errors.
+
+Test 11: Const rule/board work
+Status: FAIL
+Condition: exact $'B3/S23\n...O.\n..O..\n.O...\nO....\\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw6-tests/golly_string_validation.cc libhw6.a && ./a.out
+Exit code: 0
+Standard output (3 lines):
+	B3/S23
+	B14/S23
+	B3/S23
+Standard error is empty
+
+Test 12: Rule class .golly() function valid examples
+Status: pass
+Condition: exact 'B3/S23\nB14/S23\nB3/S23\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw6-tests/eval_validation.cc libhw6.a && ./a.out
+Exit code: 0
+Standard output (2 lines):
+	1
+	0
+Standard error is empty
+
+Test 13: Rule class .eval() function valid examples
+Status: FAIL
+Condition: exact '0\n1\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw6-tests/board_constructors.cc libhw6.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 14: Board class constructor valid examples
+Status: pass
+Condition: empty stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw6-tests/preincrement.cc libhw6.a && ./a.out
+Exit code: 0
+Standard output (4 lines):
+	.....
+	..O..
+	.O...
+	.....
+Standard error is empty
+
+Test 15: Basic preincrement case (no special char, single iter)
+Status: pass
+Condition: exact $'.....\n..O..\n.O...\n.....\\n' stdout
+Value: 0.20
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw6-tests/multiple_preincrement.cc libhw6.a && ./a.out
+Exit code: 0
+Standard output (6 lines):
+	..................
+	..................
+	...............OO.
+	OO.............O.O
+	.OO............OO.
+	................OO
+Standard error is empty
+
+Test 16: Multiple preincrement case (no special char)
+Status: pass
+Condition: exact $'..................\n..................\n...............OO.\nOO.............O.O\n.OO............OO.\n................OO\\n' stdout
+Value: 0.20
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw6-tests/custom_rule.cc libhw6.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 17: Custom rule stored in Board (no error)
+Status: pass
+Condition: empty stderr
+Value: 0.20
+
+Test 18: Custom rule stored in Board (no change after conway call)
+Status: pass
+Condition: ! grep -qi UNEXPECTED stdout
+Value: 0.20
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw6-tests/preincrement_character.cc libhw6.a && ./a.out
+Exit code: 0
+Standard output (4 lines):
+	YYYYY
+	YYXYY
+	YXYYY
+	YYYYY
+Standard error is empty
+
+Test 19: Preincrement with special char
+Status: pass
+Condition: exact $'YYYYY\nYYXYY\nYXYYY\nYYYYY\\n' stdout
+Value: 0.10

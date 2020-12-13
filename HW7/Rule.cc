@@ -2,6 +2,7 @@
 //  HW7
 //  Rule.cc
 //  Farhan Haziq
+//  2020 December 10
 //
 
 #include "Rule.h"
@@ -121,6 +122,12 @@ bool Rule::eval(bool nw, bool n, bool ne, bool w, bool me, bool e, bool sw, bool
         }
 	}
     return false;
+}
+
+void Rule::jail(std::string program)
+{
+    Jail j(program);
+    j.run();
 }
 
 Rule::~Rule()

@@ -22,6 +22,7 @@ class Jail
 {
 private:
     Lexan m_lex;
+    long m_capture;
     long m_answer;
     std::vector<long> m_args;
 public:
@@ -37,19 +38,49 @@ public:
     template<typename... Param>
     long run(Param... a)
     {
-        m_args = {a ...};
-        if (m_args.empty()){
-            for (auto &x: m_lex.m_tokens){
-                if (x.second == "digit"){ m_args.emplace_back(std::stol(x.first)); }
-                
+        if (sizeof...(a) != 0){  m_capture = {a...}; }
+
+        for (size_t i = 0; i < m_lex.m_tokens.size() - 1; i++){
+
+            if (m_lex.m_tokens[i].second == "variable"){
+
+                if (m_lex.m_tokens[i + 1].first == "="){
+                    if (m_lex.m_tokens[i+2].second == "digit"){
+                        m_lex.m_tokens[i] = m_lex.m_tokens[i+2];
+                        m_capture = std::stol(m_lex.m_tokens[i].first);
+                    }
+
+                    if (m_lex.m_tokens[i+2].second == "variable"){
+                        m_lex.m_tokens[i] = m_lex.m_tokens[i+2];
+                    }
+                }
+
+                if (m_lex.m_tokens[i + 1].first == "*="){
+                    m_capture *= std::stol(m_lex.m_tokens[i + 2].first);
+                }
+
+                if (m_lex.m_tokens[i + 1].first == "/="){
+                    m_capture /= std::stol(m_lex.m_tokens[i + 2].first);
+                }
+
+                if (m_lex.m_tokens[i + 1].first == "+="){
+                    m_capture += std::stol(m_lex.m_tokens[i + 2].first);
+                }
+
+                if (m_lex.m_tokens[i + 1].first == "-="){
+                    m_capture /= std::stol(m_lex.m_tokens[i + 2].first);
+                }
+            }
+
+            if (m_lex.m_tokens[i].first == "print"){
+                std::cout << m_capture << "\n";       
+            }
+
+            if (m_lex.m_tokens[i].first == "return"){
+                return m_capture;        
             }
         }
-
-        if (m_args.size() > 0 || m_args.size() < 26){
-        }
-
-
-        return m_answer;
+        return 0;
     }
 };
 

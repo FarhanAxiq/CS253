@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhw7.a  CMakeFiles/hw7.dir/Jail.cc.o CMakeFiles/hw7.dir/Lexan.cc.o CMakeFiles/hw7.dir/Rule.cc.o CMakeFiles/hw7.dir/Board.cc.o
+/usr/bin/ranlib libhw7.a

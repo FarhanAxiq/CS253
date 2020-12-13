@@ -2,6 +2,7 @@
 //  HW6
 //  Rule.h
 //  Farhan Haziq
+//  2020 December 10
 //
 
 #ifndef RULE_H
@@ -12,6 +13,8 @@
 #include <vector>    // std::vector
 #include <stdexcept> // std::except
 #include <algorithm> // std::is_sorted std::unique
+#include "Jail.h"
+
 
 class Rule
 {
@@ -27,6 +30,7 @@ public:
     std::string golly();
     bool is_valid();
     bool eval(bool nw, bool n, bool ne, bool w, bool me, bool e, bool sw, bool s, bool se);
+    void jail(std::string);
 };
 
 #endif

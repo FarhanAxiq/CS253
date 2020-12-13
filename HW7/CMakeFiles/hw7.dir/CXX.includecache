@@ -1,0 +1,78 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Board.cc
+Board.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Board.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Board.h
+Rule.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Rule.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Jail.cc
+Jail.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Jail.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Jail.h
+iostream
+-
+sstream
+-
+algorithm
+-
+vector
+-
+string
+-
+stdexcept
+-
+utility
+-
+Lexan.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Lexan.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Lexan.cc
+Lexan.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Lexan.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Lexan.h
+iostream
+-
+sstream
+-
+algorithm
+-
+vector
+-
+string
+-
+stdexcept
+-
+utility
+-
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Rule.cc
+Rule.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Rule.h
+
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Rule.h
+iostream
+-
+fstream
+-
+string
+-
+vector
+-
+stdexcept
+-
+algorithm
+-
+Jail.h
+/mnt/d/OneDrive - yes.my/CSU's STUFF/CS253/HW7/Jail.h
+

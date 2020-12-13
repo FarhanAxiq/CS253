@@ -13,10 +13,5 @@
 A *= 9 A /= 5   # °C × 9/5
  a+=0032        # °C × 9/5 + 32
 F = A           # Put it in F for Fahrenheit
- 
-Z = 0           # Constants have no sign, so compute a negative number.
-Z -= 459        # absolute zero (should really be −459.67°)
- 
-if F ≤ Z        # If temperature is too low:
-    F=Z         #  Make it absolute zero.
-fi
+
+return F
