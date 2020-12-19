@@ -1,0 +1,203 @@
+Score: 3.10/4.00 points
+Graded by Miller Ridgeway <millerridgeway@CS.ColoState.Edu>
+
+Summary of all tests:
+  Value  Result  Test  Description
+   0.50  pass       1  unpack
+   0.50  pass       2  libhw7.a created
+   1.00  pass       3  no warnings
+   0.10  pass       4  -Wall used
+   0.10  pass       5  no C I/O, system calls, or dynamic memory
+   0.10  pass       6  no ASCII constants
+   0.10  pass       7  no namespace in header
+   0.10  pass       8  globals
+   0.20  FAIL       9  Board throws runtime error given non-existing file (filename in error)
+   0.20  pass      10  Board throws runtime error given invalid file (filename in error)
+   0.20  FAIL      11  Bad token throws runtime error
+   0.10  FAIL      12  Invalid syntax results in runtime error
+   0.20  pass      13  Call golly, jail, and conway in any order
+   0.20  pass      14  Valid golly case
+   0.20  FAIL      15  Valid simple jail case
+   0.20  FAIL      16  Valid more complex jail case
+   3.10                Total
+Passed 11 tests, failed 5 tests.
+
+Details of individual tests:
+
+Executing: tar -xvvf submissions_hw7/haziqfarhan_175027_17717657_hw7-1.tar -C Build
+Exit code: 0
+Standard output (10 lines):
+	-rwxrwxrwx farhan/farhan   460 2020-12-12 21:25 Jail.cc
+	-rwxrwxrwx farhan/farhan  3450 2020-12-12 21:08 Jail.h
+	-rwxrwxrwx farhan/farhan  5072 2020-12-12 21:25 Lexan.cc
+	-rwxrwxrwx farhan/farhan  1211 2020-12-12 21:25 Lexan.h
+	-rwxrwxrwx farhan/farhan  2839 2020-12-12 21:25 Rule.cc
+	-rwxrwxrwx farhan/farhan   715 2020-12-12 21:25 Rule.h
+	-rwxrwxrwx farhan/farhan  4294 2020-12-12 21:25 Board.cc
+	-rwxrwxrwx farhan/farhan   815 2020-11-27 14:20 Board.h
+	-rwxrwxrwx farhan/farhan 6176552 2020-12-12 21:25 libhw7.a
+	-rwxrwxrwx farhan/farhan    1059 2020-12-12 12:43 CMakeLists.txt
+Standard error is empty
+
+Test 1: unpack
+Status: pass
+Condition: [[ -r Build/CMakeLists.txt ]]
+Value: 0.50
+
+Executing: cmake . && make
+Exit code: 0
+Standard output (10/26 lines):
+	-- The C compiler identification is GNU 10.2.1
+	-- The CXX compiler identification is GNU 10.2.1
+	-- Check for working C compiler: /usr/bin/cc
+	-- Check for working C compiler: /usr/bin/cc - works
+	-- Detecting C compiler ABI info
+	-- Detecting C compiler ABI info - done
+	-- Detecting C compile features
+	-- Detecting C compile features - done
+	-- Check for working CXX compiler: /usr/bin/c++
+	-- Check for working CXX compiler: /usr/bin/c++ - works
+	… and 16 more lines …
+Standard error is empty
+
+Test 2: libhw7.a created
+Status: pass
+Condition: [[ -r Build/libhw7.a ]]
+Value: 0.50
+
+Test 3: no warnings
+Status: pass
+Condition: ! grep -qi warning stdout stderr
+Value: 1.00
+
+Test 4: -Wall used
+Status: pass
+Condition: grep -q 'add_compile_options.*-Wall\b' Build/CMakeLists.txt
+Value: 0.10
+Contents of file Build/CMakeLists.txt (10/28 lines, missing final newline):
+	cmake_minimum_required(VERSION 3.14)
+	project(hw7)
+	 
+	# Are we in the wrong directory?
+	if(CMAKE_SOURCE_DIR MATCHES "[Hh][Ww]([0-9])$")
+	   if(PROJECT_NAME MATCHES "[^${CMAKE_MATCH_1}]$")
+	      message(FATAL_ERROR "Building ${PROJECT_NAME} in ${CMAKE_SOURCE_DIR}")
+	   endif()
+	endif()
+	 
+	… and 18 more lines …
+
+Test 5: no C I/O, system calls, or dynamic memory
+Status: pass
+Condition: Don’t use: system fork popen execl execlp execle execv execvp execvpe printf scanf fopen getchar malloc calloc realloc free strdup eof
+Value: 0.10
+
+Test 6: no ASCII constants
+Status: pass
+Condition: ! grep -P '\b[4-9]\d\b' Build/Board.cc Build/Jail.cc Build/Lexan.cc Build/Rule.cc
+Value: 0.10
+
+Test 7: no namespace in header
+Status: pass
+Condition: ! grep -qi 'using namespace' Build/Board.h Build/Jail.h Build/Lexan.h Build/Rule.h
+Value: 0.10
+
+Test 8: globals
+Status: pass
+Condition: No globals other than program_name
+Value: 0.10
+
+Executing: g++ -std=c++20 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw7-tests/no_exist_board.cc libhw7.a && ./a.out
+Exit code: 139 (SIGSEGV)
+Standard output and standard error are both empty
+
+Test 9: Board throws runtime error given non-existing file (filename in error)
+Status: FAIL
+Condition: grep -qi plums stdout
+Value: 0.20
+
+Executing: g++ -std=c++20 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw7-tests/bad_board_lines.cc libhw7.a && ./a.out
+Exit code: 0
+Standard output (0 lines, missing final newline):
+	Invalid board generated from the file /home/millerridgeway/Projects/253_Grading/Grader/boards/bad_lines
+Standard error is empty
+
+Test 10: Board throws runtime error given invalid file (filename in error)
+Status: pass
+Condition: grep -qi bad_lines stdout
+Value: 0.20
+
+Executing: g++ -std=c++20 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw7-tests/bad_token.cc libhw7.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 11: Bad token throws runtime error
+Status: FAIL
+Condition: grep -qi runtime_error stderr
+Value: 0.20
+
+Executing: g++ -std=c++20 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw7-tests/invalid_syntax.cc libhw7.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 12: Invalid syntax results in runtime error
+Status: FAIL
+Condition: grep -qi runtime_error stderr
+Value: 0.10
+
+Executing: g++ -std=c++20 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw7-tests/rule_call_valid_order.cc libhw7.a && ./a.out
+Exit code: 0
+Standard output (4 lines):
+	....
+	.OOO
+	.OOO
+	....
+Standard error is empty
+
+Test 13: Call golly, jail, and conway in any order
+Status: pass
+Condition: exact $'....\n.OOO\n.OOO\n....\\n' stdout
+Value: 0.20
+
+Executing: g++ -std=c++20 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw7-tests/valid_golly.cc libhw7.a && ./a.out
+Exit code: 0
+Standard output (4 lines):
+	....
+	.O..
+	...O
+	....
+Standard error is empty
+
+Test 14: Valid golly case
+Status: pass
+Condition: exact $'....\n.O..\n...O\n....\\n' stdout
+Value: 0.20
+
+Executing: g++ -std=c++20 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw7-tests/valid_jail_simple.cc libhw7.a && ./a.out
+Exit code: 0
+Standard output (4 lines):
+	....
+	.OOO
+	.OOO
+	....
+Standard error is empty
+
+Test 15: Valid simple jail case
+Status: FAIL
+Condition: exact $'..OO\nO..O\nOO..\n.OO.\\n' stdout
+Value: 0.20
+
+Executing: g++ -std=c++20 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw7-tests/valid_jail_complex.cc libhw7.a && ./a.out
+Exit code: 0
+Standard output (5 lines):
+	..O.O.
+	......
+	.OO.O.
+	....OO
+	....OO
+Standard error is empty
+
+Test 16: Valid more complex jail case
+Status: FAIL
+Condition: exact $'......\n..O.O.\n......\n....O.\n....O.\\n' stdout
+Value: 0.20

@@ -1,0 +1,272 @@
+Score: 2.60/4.00 points
+Graded by Miller Ridgeway <millerridgeway@CS.ColoState.Edu>
+
+Summary of all tests:
+  Value  Result  Test  Description
+   0.50  pass       1  unpack
+   0.50  pass       2  libhw5.a created
+   1.00  pass       3  no warnings
+   0.10  pass       4  -Wall used
+   0.10  pass       5  no C I/O, system calls, or dynamic memory
+   0.10  pass       6  no ASCII constants
+   0.10  pass       7  no namespace in header
+   0.10  pass       8  globals
+   0.10  FAIL       9  bad number throws runtime error
+   0.10  FAIL      10  bad input symbol to lexer results in runtime error
+   0.10  FAIL      11  if without fi
+   0.10  FAIL      12  fi without if
+   0.10  FAIL      13  illogical syntax (return print)
+   0.10  FAIL      14  divide by 0
+   0.10  pass      15  default constructor must fail to compile
+   0.10  FAIL      16  simple input (a=123, print a)
+   0.10  FAIL      17  copy constructor and assignment
+   0.10  FAIL      18  run with variable argument (print a, print b)
+   0.10  FAIL      19  variable on right side of operator/input to run is long
+   0.10  FAIL      20  valid if statement
+   0.10  FAIL      21  nested if statement
+   0.10  FAIL      22  return statement
+   0.10  FAIL      23  complex program with unicode operators
+   2.60                Total
+Passed 9 tests, failed 14 tests.
+
+Details of individual tests:
+
+Executing: tar -xvvf submissions_hw5/haziqfarhan_LATE_175027_17261574_hw5.tar -C Build
+Exit code: 0
+Standard output (6 lines):
+	-rwxrwxrwx farhan/farhan   460 2020-11-07 21:44 Jail.cc
+	-rwxrwxrwx farhan/farhan  1252 2020-11-07 21:45 Jail.h
+	-rwxrwxrwx farhan/farhan  5072 2020-11-07 21:22 Lexan.cc
+	-rwxrwxrwx farhan/farhan  1211 2020-11-07 21:22 Lexan.h
+	-rwxrwxrwx farhan/farhan 154024 2020-11-07 22:00 libhw5.a
+	-rwxrwxrwx farhan/farhan    995 2020-11-07 22:00 CMakeLists.txt
+Standard error is empty
+
+Test 1: unpack
+Status: pass
+Condition: [[ -r Build/CMakeLists.txt ]]
+Value: 0.50
+
+Executing: cmake . && make
+Exit code: 0
+Standard output (10/24 lines):
+	-- The C compiler identification is GNU 9.3.1
+	-- The CXX compiler identification is GNU 9.3.1
+	-- Check for working C compiler: /usr/bin/cc
+	-- Check for working C compiler: /usr/bin/cc - works
+	-- Detecting C compiler ABI info
+	-- Detecting C compiler ABI info - done
+	-- Detecting C compile features
+	-- Detecting C compile features - done
+	-- Check for working CXX compiler: /usr/bin/c++
+	-- Check for working CXX compiler: /usr/bin/c++ - works
+	… and 14 more lines …
+Standard error is empty
+
+Test 2: libhw5.a created
+Status: pass
+Condition: [[ -r Build/libhw5.a ]]
+Value: 0.50
+
+Test 3: no warnings
+Status: pass
+Condition: ! grep -qi warning stdout stderr
+Value: 1.00
+
+Test 4: -Wall used
+Status: pass
+Condition: grep -q 'add_compile_options.*-Wall\b' Build/CMakeLists.txt
+Value: 0.10
+Contents of file Build/CMakeLists.txt (10/28 lines, missing final newline):
+	cmake_minimum_required(VERSION 3.14)
+	project(hw5)
+	 
+	# Are we in the wrong directory?
+	if(CMAKE_SOURCE_DIR MATCHES "[Hh][Ww]([0-9])$")
+	   if(PROJECT_NAME MATCHES "[^${CMAKE_MATCH_1}]$")
+	      message(FATAL_ERROR "Building ${PROJECT_NAME} in ${CMAKE_SOURCE_DIR}")
+	   endif()
+	endif()
+	 
+	… and 18 more lines …
+
+Test 5: no C I/O, system calls, or dynamic memory
+Status: pass
+Condition: Don’t use: system fork popen execl execlp execle execv execvp execvpe printf scanf fopen getchar malloc calloc realloc free strdup eof
+Value: 0.10
+
+Test 6: no ASCII constants
+Status: pass
+Condition: ! grep -P '\b[4-9]\d\b' Build/Lexan.cc
+Value: 0.10
+
+Test 7: no namespace in header
+Status: pass
+Condition: ! grep -qi 'using namespace' Build/Jail.h Build/Lexan.h
+Value: 0.10
+
+Test 8: globals
+Status: pass
+Condition: No globals other than program_name
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/bad_number.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output is empty
+Standard error (4 lines):
+	/home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/bad_number.cc: In function 'int main()':
+	/home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/bad_number.cc:9:27: warning: catching polymorphic type 'class std::runtime_error' by value [-Wcatch-value=]
+	    9 |     } catch(runtime_error e){
+	      |                           ^
+
+Test 9: bad number throws runtime error
+Status: FAIL
+Condition: exact success stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/bad_input.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 10: bad input symbol to lexer results in runtime error
+Status: FAIL
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/open_if.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 11: if without fi
+Status: FAIL
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/open_fi.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 12: fi without if
+Status: FAIL
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/illogical_syntax.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 13: illogical syntax (return print)
+Status: FAIL
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/divide_zero.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 14: divide by 0
+Status: FAIL
+Condition: ! empty stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/default_ctor_fail.cc libhw5.a
+Exit code: 1
+Standard output is empty
+Standard error (5 lines):
+	/home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/default_ctor_fail.cc: In function 'int main()':
+	/home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/default_ctor_fail.cc:7:10: error: no matching function for call to 'Jail::Jail()'
+	    7 |     Jail j;
+	      |          ^
+	compilation terminated due to -Wfatal-errors.
+
+Test 15: default constructor must fail to compile
+Status: pass
+Condition: grep -qi 'Jail::Jail()' stderr
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/simple.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 16: simple input (a=123, print a)
+Status: FAIL
+Condition: exact '123\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/copy_assignment.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 17: copy constructor and assignment
+Status: FAIL
+Condition: exact '123\n123\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/run_arg.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 18: run with variable argument (print a, print b)
+Status: FAIL
+Condition: exact '456\n789\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/variable_in_value.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output is empty
+Standard error (10 lines):
+	/home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/variable_in_value.cc:8:19: warning: integer constant is too large for its type
+	    8 |     j.run(1, 100, 1234567891011121314151617181920);
+	      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	In file included from /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/variable_in_value.cc:1:
+	./Jail.h: In instantiation of 'long int Jail::run(Param ...) [with Param = {int, int, __int128}]':
+	/home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/variable_in_value.cc:8:50:   required from here
+	./Jail.h:40:19: warning: narrowing conversion of 'a#2' from '__int128' to 'long int' [-Wnarrowing]
+	   40 |         m_args = {a ...};
+	      |                   ^
+	./Jail.h:40:19: warning: narrowing conversion of 'a#2' from '__int128' to 'long int' [-Wnarrowing]
+
+Test 19: variable on right side of operator/input to run is long
+Status: FAIL
+Condition: exact '10\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/valid_if.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 20: valid if statement
+Status: FAIL
+Condition: exact '11\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/nested_if.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output and standard error are both empty
+
+Test 21: nested if statement
+Status: FAIL
+Condition: exact '19\n11\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/return.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output (1 line):
+	4254616
+Standard error is empty
+
+Test 22: return statement
+Status: FAIL
+Condition: exact '151\n' stdout
+Value: 0.10
+
+Executing: g++ -std=c++17 -Wall -Wfatal-errors -I. /home/millerridgeway/Projects/253_Grading/Grader/hw5-tests/complex_operators.cc libhw5.a && ./a.out
+Exit code: 0
+Standard output (1 line):
+	4
+Standard error is empty
+
+Test 23: complex program with unicode operators
+Status: FAIL
+Condition: exact '777\n888\n' stdout
+Value: 0.10
